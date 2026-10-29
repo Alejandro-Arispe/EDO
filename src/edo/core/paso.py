@@ -38,8 +38,10 @@ class Resultado:
     verificacion: Verificacion | None = None
     advertencias: list[str] = field(default_factory=list)
     otros_metodos_aplicables: list[dict] = field(default_factory=list)
+    valor: object = None  # objeto SymPy de la solución (no se serializa)
 
     def to_dict(self) -> dict:
         d = asdict(self)
+        d.pop("valor", None)
         d["verificacion"] = self.verificacion.to_dict() if self.verificacion else None
         return d

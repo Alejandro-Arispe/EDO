@@ -7,7 +7,7 @@ header{padding-top:20px}h1{margin:0;font-size:1.5rem}header p{margin:2px 0 14px;
 nav{display:flex;gap:6px;margin-bottom:12px}
 nav button{background:none;border:1px solid var(--bd);color:var(--fg)}nav .activa{background:var(--ac);color:#fff;border-color:var(--ac)}
 label{display:block;margin:12px 0 4px;font-size:.85rem;color:var(--mut)}
-input,math-field{width:100%;padding:9px 10px;font:inherit;border:1px solid var(--bd);border-radius:8px;background:var(--card);color:var(--fg)}
+input,select,math-field{width:100%;padding:9px 10px;font:inherit;border:1px solid var(--bd);border-radius:8px;background:var(--card);color:var(--fg)}
 math-field{font-size:1.2rem}
 button{padding:8px 14px;border-radius:8px;border:1px solid var(--bd);background:var(--card);color:var(--fg);font:inherit;cursor:pointer}
 button.primario{background:var(--ac);color:#fff;border-color:var(--ac)}

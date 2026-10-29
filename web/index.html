@@ -12,8 +12,28 @@
 <main>
   <nav id="tabs">
     <button data-tab="ed" class="activa">Ecuación diferencial</button>
+    <button data-tab="conceptos">Conceptos</button>
     <button data-tab="calculo">Derivadas e integrales</button>
   </nav>
+
+  <section id="tab-conceptos" hidden>
+    <label>Herramienta</label>
+    <select id="c-herr">
+      <option value="constantes">Constantes con condiciones iniciales</option>
+      <option value="tipo">Tipo de solución (general, particular, singular, trivial)</option>
+      <option value="dependencia">Dependencia lineal y Wronskiano</option>
+      <option value="raices">ED desde las raíces de la ecuación característica</option>
+    </select>
+    <div class="c-campo" data-herr="constantes tipo"><label>Ecuación diferencial</label><input id="c-ed" type="text" placeholder="y'''+y'=0" autocomplete="off"></div>
+    <div class="c-campo" data-herr="constantes tipo"><label>Solución (general o la que quieras analizar)</label><input id="c-resp" type="text" placeholder="y=C1+C2 cos x+C3 sen x" autocomplete="off"></div>
+    <div class="c-campo" data-herr="constantes"><label>Condiciones iniciales</label><input id="c-cond" type="text" placeholder="y(pi)=0, y'(pi)=2, y''(pi)=-1" autocomplete="off"></div>
+    <div class="c-campo" data-herr="tipo"><label>Solución general de la ED (opcional, para distinguir particular de singular)</label><input id="c-gen" type="text" placeholder="y=C x+C^2" autocomplete="off"></div>
+    <div class="c-campo" data-herr="dependencia"><label>Funciones separadas por «;»</label><input id="c-funcs" type="text" placeholder="x; 2x; x^2" autocomplete="off"></div>
+    <div class="c-campo" data-herr="dependencia"><label><input id="c-mismo" type="checkbox" style="width:auto"> Son soluciones de una misma ED lineal homogénea</label></div>
+    <div class="c-campo" data-herr="raices"><label>Raíces (repetidas, «(2)», «doble» o D1=D2=…)</label><input id="c-raices" type="text" placeholder="D1=D2=5+2i; D3=D4=5-2i; D5=D6=0" autocomplete="off"></div>
+    <div class="fila"><button id="btn-concepto" class="primario">Resolver</button></div>
+    <div id="salida-conceptos"></div>
+  </section>
 
   <section id="tab-ed">
     <label>Ecuación (texto o editor matemático)</label>

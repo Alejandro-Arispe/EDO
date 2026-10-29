@@ -81,10 +81,13 @@ def desde_latex(s: str) -> str:
             k = _cerrar(s, j + 1)
             den = s[j + 2:k]
             nc, dc = re.sub(r"\s+", "", num), re.sub(r"\s+", "", den)
-            md = re.fullmatch(r"d(?:\^\{?(\d+)\}?)?y", nc)
-            if md and re.fullmatch(r"dx(?:\^\{?\d+\}?)?", dc):
-                n = md.group(1) or "1"
-                rep = f"d^{n}y/dx^{n}"
+            nc, dc = nc.replace("\\partial", "∂"), dc.replace("\\partial", "∂")
+            md = re.fullmatch(r"([d∂])(?:\^\{?(\d+)\}?)?([A-Za-z])", nc)
+            if md and re.fullmatch(r"(?:[d∂][A-Za-z](?:\^\{?\d+\}?)?)+", dc):
+                n = md.group(2)
+                num_txt = f"{md.group(1)}{'^' + n if n else ''}{md.group(3)}"
+                dens = re.findall(r"([d∂])([A-Za-z])(?:\^\{?(\d+)\}?)?", dc)
+                rep = num_txt + "/" + "".join(f"{a}{b}{'^' + c if c else ''}" for a, b, c in dens)
             else:
                 rep = f"(({desde_latex(num)})/({desde_latex(den)}))"
             s = s[:m.start()] + rep + s[k + 1:]
@@ -139,6 +142,14 @@ def _fin_argumento(s: str, i: int) -> int:
         j = i
         if j < len(s) and s[j] in "+-":
             j += 1
+        w0 = re.match(r"[A-Za-z]+", s[j:])
+        if w0 and _prefijo_funcion(w0.group(0)) and s[j:].startswith(_prefijo_funcion(w0.group(0))):
+            nombre = _prefijo_funcion(w0.group(0))
+            k = j + len(nombre)
+            if k < len(s) and s[k] == "^":
+                k = _atomo_exponente(s, k + 1)
+            k2 = k + re.match(r"\s*", s[k:]).end()
+            return _fin_argumento(s, k2)
         primero = True
         while j < len(s) and (s[j].isalnum() or s[j] in "_."):
             if s[j].isalpha() and not primero and s[j - 1].isdigit():
@@ -228,7 +239,8 @@ def _normalizar(s: str) -> str:
 
 _TRANSF = standard_transformations + (split_symbols, implicit_multiplication, convert_xor)
 _LOCAL = {"x": x, "y": ys, "e": sp.E, "D": D, "DIFX": _DIFX, "DIFY": _DIFY, "pi": sp.pi,
-          **{f"Yd{k}": v for k, v in _YD.items()}}
+          **{f"Yd{k}": v for k, v in _YD.items()},
+          "C": sp.Symbol("C"), **{f"C{k}": sp.Symbol(f"C{k}") for k in range(1, 13)}}
 
 
 def _parsear(s: str) -> sp.Expr:

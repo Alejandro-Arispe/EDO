@@ -18,7 +18,10 @@ TOL = 1e-7
 def _numerico(expr: sp.Expr, simbolos: list[sp.Symbol], rng: random.Random,
               dominio=(0.3, 2.5), puntos: int = N_PUNTOS) -> tuple[bool, str]:
     """Evalúa expr en ``puntos`` puntos aleatorios. Falla si algún valor no es ~0."""
-    f = sp.lambdify(simbolos, expr, modules=["mpmath"])
+    try:
+        f = sp.lambdify(simbolos, expr, modules=["mpmath"])
+    except Exception:
+        return False, "no se pudo evaluar numéricamente"
     validos = intentos = 0
     peor = 0.0
     while validos < puntos and intentos < 60:
@@ -30,7 +33,7 @@ def _numerico(expr: sp.Expr, simbolos: list[sp.Symbol], rng: random.Random,
             continue
         if v != v or abs(v) == float("inf"):
             continue
-        escala = max(1.0, max(abs(p) for p in pt))
+        escala = max([1.0] + [abs(p) for p in pt])
         peor = max(peor, abs(v) / escala)
         validos += 1
     if validos < puntos:

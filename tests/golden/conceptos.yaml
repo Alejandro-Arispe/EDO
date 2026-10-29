@@ -1,0 +1,63 @@
+# Casos del Tema 1 (conceptos y definiciones). Páginas = número impreso al pie del texto.
+# tipo: clasificar | verificar | constantes | dependencia | raices | tipo_solucion
+
+# ---- Orden y grado (texto p.13)
+- {id: t1-grado-1, tipo: clasificar, ed: "d^2y/dx^2 - 3(dy/dx)^3 + y = x", esperado: {tipo: ordinaria, orden: 2, grado: 1, lineal: false}, ref: "texto p.13 ej. inicial"}
+- {id: t1-grado-2, tipo: clasificar, ed: "(dy/dx)^4 - 2x(d^3y/dx^3)^2 + xy = 0", esperado: {orden: 3, grado: 2}, ref: "texto p.13 ej.1"}
+- {id: t1-grado-3, tipo: clasificar, ed: "y = xy + sqrt(y') + ln(y')", esperado: {orden: 1, grado: null}, ref: "texto p.13 ej.2 (no tiene grado)"}
+- {id: t1-grado-4, tipo: clasificar, ed: "d^2y/dx^2 = sqrt(1+(dy/dx)^2)", esperado: {orden: 2, grado: 2}, ref: "texto p.13 ej.3"}
+- {id: t1-grado-5, tipo: clasificar, ed: "d^3y/dx^3 - 2x(d^2y/dx^2)^3 + dy/dx = sen(x)", esperado: {orden: 3, grado: 1}, ref: "texto p.13 ej.4"}
+- {id: t1-grado-6, tipo: clasificar, ed: "x^2 y dx + y ln(x) dy = 0", esperado: {orden: 1, grado: 1}, ref: "texto p.13 ej.5"}
+
+# ---- Linealidad (texto p.14)
+- {id: t1-lin-1, tipo: clasificar, ed: "(x-1)y'' - 4xy = e^x", esperado: {lineal: true, homogenea: false}, ref: "texto p.14"}
+- {id: t1-lin-2, tipo: clasificar, ed: "d^2y/dx^2 + 2cos(y) = 3", esperado: {lineal: false}, ref: "texto p.14"}
+- {id: t1-lin-3, tipo: clasificar, ed: "d^3y/dx^3 - 2y^3 = x", esperado: {lineal: false}, ref: "texto p.14"}
+- {id: t1-lin-4, tipo: clasificar, ed: "d^3y/dx^3 - 2x d^2y/dx^2 + dy/dx = sen(x)", esperado: {lineal: true, homogenea: false}, ref: "texto p.14"}
+- {id: t1-lin-5, tipo: clasificar, ed: "y = xy + e^(y')", esperado: {lineal: false}, ref: "texto p.14"}
+- {id: t1-lin-6, tipo: clasificar, ed: "(1-y)y'' + xy = sen(x)", esperado: {lineal: false}, ref: "texto p.14"}
+- {id: t1-lin-7, tipo: clasificar, ed: "(y-3x)dx + 5x dy = 0", esperado: {lineal: true, homogenea: false}, ref: "texto p.14 (se expresa como 5x dy/dx + y = 3x)"}
+- {id: t1-lin-8, tipo: clasificar, ed: "y'' + y = 0", esperado: {lineal: true, homogenea: true}, ref: "definición"}
+
+# ---- Ordinaria / parcial (texto p.11-12)
+- {id: t1-parcial-1, tipo: clasificar, ed: "dP/dt = kP", esperado: {tipo: ordinaria, orden: 1, grado: 1, lineal: true, homogenea: true}, ref: "texto p.12"}
+- {id: t1-parcial-2, tipo: clasificar, ed: "∂z/∂x + ∂z/∂y = 4", esperado: {tipo: parcial, orden: 1}, ref: "texto p.12"}
+- {id: t1-parcial-3, tipo: clasificar, ed: "∂^2u/∂x^2 + ∂^2u/∂y^2 + ∂^2u/∂z^2 = 0", esperado: {tipo: parcial, orden: 2, lineal: true, homogenea: true}, ref: "texto p.12"}
+- {id: t1-parcial-4, tipo: clasificar, ed: "z_xx + z_yy = 0", esperado: {tipo: parcial, orden: 2}, ref: "texto p.11 (subíndices)"}
+
+# ---- Verificar que una función es solución (texto p.15-16 y 19)
+- {id: t1-ver-1, tipo: verificar, ed: "y'' - 2y' + 2y = 0", respuesta: "y = e^x sen x", ok: true, ref: "texto p.15 ej.1"}
+- {id: t1-ver-2, tipo: verificar, ed: "(x+y)dx - (x-y)dy = 0", respuesta: "arctg(y/x) = ln sqrt(x^2+y^2)", ok: true, ref: "texto p.16 ej.3"}
+- {id: t1-ver-3, tipo: verificar, ed: "dy/dx = 2xy", respuesta: "y = e^(x^2+C)", ok: true, ref: "texto p.19"}
+- {id: t1-ver-4, tipo: verificar, ed: "y'' - 2y' + 2y = 0", respuesta: "y = e^x", ok: false, ref: "contraste"}
+- {id: t1-ver-5, tipo: verificar, ed: "y' = 0", respuesta: "y = 0", ok: true, nota_trivial: true, ref: "texto p.15 (solución trivial)"}
+# A3: la función no satisface la ED escrita en el texto; sí satisface x y'(1+ln y) = x sen x + y ln y
+- {id: A3-texto, tipo: verificar, ed: "xy' + x ln y = x sen x + y ln y", respuesta: "x*Integral(sin(t)/t,(t,0,x)) = y ln y", ok: false, discrepancia: A3, relacion: "x y'(1+ln y) = x sen x + y ln y", ref: "texto p.15 ej.2; DISCREPANCIAS A3"}
+- {id: A3-correcta, tipo: verificar, ed: "x y'(1+ln y) = x sen x + y ln y", respuesta: "x*Integral(sin(t)/t,(t,0,x)) = y ln y", ok: true, ref: "DISCREPANCIAS A3"}
+- {id: A4, tipo: verificar, ed: "(2xy+3)dy - y^2 dx = 0", respuesta: "x/y^2 + 1/y^3 = C", ok: true, ref: "DISCREPANCIAS A4"}
+- {id: A4-texto, tipo: verificar, ed: "(2xy+3)dy - y^2 dx = 0", respuesta: "x/y^2 + 3/(4y^4) = C", ok: false, ref: "DISCREPANCIAS A4 (lo que escribió el texto)"}
+- {id: A5, tipo: verificar, ed: "(1+e^(x/y))dx + e^(x/y)(1-x/y)dy = 0", respuesta: "x + y e^(x/y) = C", ok: true, ref: "DISCREPANCIAS A5"}
+
+# ---- Constantes con condiciones iniciales
+- {id: A1, tipo: constantes, ed: "y' = 3-2x", general: "y = 3x - x^2 + C", condiciones: "y(1)=2", solucion: "3x - x^2", discrepancia: A1, ref: "texto p.17 ej.1; DISCREPANCIAS A1"}
+- {id: A2, tipo: constantes, ed: "(y+3)dx + (4-x)dy = 0", general: "y = C(x-4) - 3", condiciones: "y(7)=0", solucion: "x - 7", discrepancia: A2, ref: "DISCREPANCIAS A2"}
+- {id: t1-II-eval-4, tipo: constantes, ed: "y''' + y' = 0", general: "y = C1 + C2 cos x + C3 sen x", condiciones: "y(pi)=0, y'(pi)=2, y''(pi)=-1", solucion: "-1 - cos(x) - 2 sen(x)", ref: "II Evaluación p.7 ej.4"}
+- {id: t1-p18-ej2, tipo: constantes, general: "(x+C)^2 + y^2 = 9", condiciones: "y(0)=0", solucion_implicita: "(x-3)^2 + y^2 - 9", ref: "texto p.18 ej.2 (C=-3)"}
+
+# ---- Dependencia lineal y Wronskiano (A7)
+- {id: A7-dependientes, tipo: dependencia, funciones: "x; 2x; x^2", resultado: dependientes, ref: "DISCREPANCIAS A7"}
+- {id: t1-dep-2, tipo: dependencia, funciones: "sen x; cos x", resultado: independientes, ref: "definición"}
+- {id: t1-dep-3, tipo: dependencia, funciones: "e^x; x e^x; x^2 e^x", resultado: independientes, ref: "definición"}
+- {id: t1-dep-4, tipo: dependencia, funciones: "1; x; x^2; 2x+3", resultado: dependientes, ref: "definición"}
+- {id: t1-dep-5, tipo: dependencia, funciones: "sen(x)^2; cos(x)^2; 1", resultado: dependientes_o_no, ref: "sen²+cos²=1"}
+
+# ---- ED desde las raíces (II Evaluación p.7 ej.1; A8; B1)
+- {id: B1, tipo: raices, raices: "D1=D2=5+2i; D3=D4=5-2i; D5=D6=0", orden: 6, ref: "II Evaluación p.7 ej.1; DISCREPANCIAS B1"}
+- {id: A8, tipo: raices, raices: "2 (3)", orden: 3, discrepancia: A8, ref: "DISCREPANCIAS A8"}
+- {id: t1-raices-3, tipo: raices, raices: "1, 2, 3", orden: 3, ref: "definición"}
+
+# ---- Tipos de solución
+- {id: t1-tipo-general, tipo: tipo_solucion, ed: "y' = 2y", respuesta: "y = C e^(2x)", esperado: general}
+- {id: t1-tipo-trivial, tipo: tipo_solucion, ed: "y' = 2y", respuesta: "y = 0", esperado: trivial}
+- {id: t1-tipo-singular, tipo: tipo_solucion, ed: "y = x y' + y'^2", respuesta: "y = -x^2/4", general: "y = C x + C^2", esperado: singular}
+- {id: t1-tipo-particular, tipo: tipo_solucion, ed: "y = x y' + y'^2", respuesta: "y = x + 1", general: "y = C x + C^2", esperado: particular}

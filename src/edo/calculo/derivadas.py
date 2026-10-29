@@ -89,8 +89,12 @@ class _Derivador:
         if self.dep(den):
             if self.dep(num):
                 return self._cociente(num, den)
-            # c / g(x) = c * g^(-1)
-            c, resto = num, sp.Pow(den, -1)
+            # c / g(x) = c * g^(-1); las constantes del denominador pasan al numerador
+            fden = sp.Mul.make_args(den)
+            c = num / sp.Mul(*[f for f in fden if not self.dep(f)])
+            resto = sp.Pow(sp.Mul(*[f for f in fden if self.dep(f)]), -1)
+            if c == 1:  # no hay constante que sacar: es un producto de potencias
+                return self._producto(e, list(sp.Mul.make_args(e)))
             self.paso("Regla del múltiplo constante", "(c·f)' = c·f'", e,
                       rf"{_p(c)}\,{self.dx(resto)}",
                       f"${latex(c)}$ es constante; se escribe el cociente como potencia de exponente $-1$.")

@@ -1,0 +1,64 @@
+"""Registro de los errores conocidos del texto del docente (docs/DISCREPANCIAS.md, Anexo A).
+
+Si el problema que se está resolviendo coincide con uno del registro, el paso afectado
+lleva la nota "Discrepancia con el texto del docente".
+"""
+from __future__ import annotations
+
+from dataclasses import dataclass
+from functools import lru_cache
+
+import sympy as sp
+
+from .lector import leer_condiciones, leer_ed
+
+
+@dataclass(frozen=True)
+class Entrada:
+    id: str
+    ed: str
+    condiciones: str | None
+    paso: str      # clave del paso afectado: "verificacion", "constantes", ...
+    nota: str
+
+
+REGISTRO: list[Entrada] = [
+    Entrada("A1", "y'=3-2x", "y(1)=2", "constantes",
+            "El texto usó x=2, y=1 (invirtió el par) y obtuvo C=-1. Como y(1)=2 significa x=1, y=2, "
+            "se tiene 2 = 3(1) - 1² + C, es decir C=0 y la solución particular es y=3x-x²."),
+    Entrada("A2", "(y+3)dx+(4-x)dy=0", "y(7)=0", "constantes",
+            "El texto usó x=0, y=7 (invirtió el par). Como y(7)=0 significa x=7, y=0, la solución "
+            "particular es y=x-7."),
+    Entrada("A3", "xy'+x ln y = x sen x + y ln y", None, "verificacion",
+            "El texto perdió y' al derivar ln y. Derivando correctamente se obtiene "
+            "x y'(1+ln y) = x sen x + y ln y, que no es la ecuación escrita en el texto."),
+]
+
+
+@lru_cache(maxsize=None)
+def _ed(texto: str):
+    return leer_ed(texto)
+
+
+@lru_cache(maxsize=None)
+def _conds(texto: str):
+    return tuple((c.orden, c.x0, c.valor) for c in leer_condiciones(texto))
+
+
+def _misma_ed(a, b) -> bool:
+    try:
+        return sp.simplify(a.expr - b.expr) == 0 or sp.simplify(a.expr + b.expr) == 0
+    except Exception:
+        return False
+
+
+def nota(paso: str, ed, condiciones=None) -> str | None:
+    """Nota de discrepancia para ``paso`` si el problema coincide con uno del registro."""
+    conds = tuple((c.orden, c.x0, c.valor) for c in (condiciones or []))
+    for e in REGISTRO:
+        if e.paso != paso or not _misma_ed(ed, _ed(e.ed)):
+            continue
+        if e.condiciones is not None and conds != _conds(e.condiciones):
+            continue
+        return f"[{e.id}] {e.nota}"
+    return None

@@ -75,7 +75,28 @@ async function verificar() {
   const destino = $("salida-ed"); destino.innerHTML = "";
   try {
     const d = await api("/verificar", { ed: entradaED().entrada, respuesta: $("respuesta").value });
+    if (d.pasos) pintarPasos(d.pasos, destino);
     pintarVerificacion(d.verificacion, destino);
+  } catch (e) { error(destino, e); }
+}
+
+function actualizarCampos() {
+  const h = $("c-herr").value;
+  document.querySelectorAll(".c-campo").forEach((c) => { c.style.display = c.dataset.herr.split(" ").includes(h) ? "block" : "none"; });
+}
+async function concepto() {
+  const destino = $("salida-conceptos"); destino.innerHTML = "";
+  const h = $("c-herr").value;
+  try {
+    let d;
+    if (h === "constantes") d = await api("/conceptos/constantes", { ed: $("c-ed").value, respuesta: $("c-resp").value, condiciones: $("c-cond").value });
+    else if (h === "tipo") d = await api("/conceptos/tipo_solucion", { ed: $("c-ed").value, respuesta: $("c-resp").value, general: $("c-gen").value });
+    else if (h === "dependencia") d = await api("/conceptos/dependencia", { entrada: $("c-funcs").value, mismo_ed: $("c-mismo").checked });
+    else d = await api("/conceptos/raices", { entrada: $("c-raices").value });
+    if (d.solucion) mate(crear("div", "paso", destino), d.solucion.includes("\\") || d.solucion.includes("=") ? d.solucion : "\text{" + d.solucion + "}");
+    pintarPasos(d.pasos, destino);
+    if (d.verificacion) pintarVerificacion(d.verificacion, destino);
+    (d.advertencias || []).forEach((a) => { crear("div", "aviso", destino).textContent = a; });
   } catch (e) { error(destino, e); }
 }
 
@@ -94,6 +115,7 @@ document.querySelectorAll("#tabs button").forEach((b) => b.addEventListener("cli
   document.querySelectorAll("#tabs button").forEach((o) => o.classList.toggle("activa", o === b));
   $("tab-ed").hidden = b.dataset.tab !== "ed";
   $("tab-calculo").hidden = b.dataset.tab !== "calculo";
+  $("tab-conceptos").hidden = b.dataset.tab !== "conceptos";
 }));
 $("entrada").addEventListener("input", programarLectura);
 $("ml").addEventListener("input", programarLectura);
@@ -106,6 +128,9 @@ $("toggle-ml").addEventListener("click", () => {
 $("btn-clasificar").addEventListener("click", () => accion("/clasificar", "salida-ed"));
 $("btn-resolver").addEventListener("click", () => accion("/resolver", "salida-ed"));
 $("btn-verificar").addEventListener("click", verificar);
+$("c-herr").addEventListener("change", actualizarCampos);
+$("btn-concepto").addEventListener("click", concepto);
+actualizarCampos();
 $("btn-derivar").addEventListener("click", () => calculo("/calculo/derivar"));
 $("btn-integrar").addEventListener("click", () => calculo("/calculo/integrar"));
 try { if (window.MathfieldElement) MathfieldElement.fontsDirectory = "vendor/mathlive/fonts"; } catch (e) {}
