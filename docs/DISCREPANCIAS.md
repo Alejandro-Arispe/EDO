@@ -31,3 +31,11 @@ La matemática correcta manda. Cada punto es una prueba en `tests/golden/`. A3 y
 | B3 | y⁽⁹⁾-y⁽⁷⁾+273y⁽⁵⁾-820y'''+576y'=0 | Raíces no exactas (≈ ±1.06, ±1.36, ±2.80±2.97i): resolver numéricamente y avisar de posible error de transcripción |
 | B4 | 2y''+2y'+y=4√x | Integrales de variación de parámetros probablemente no elementales: dejarlas indicadas con aviso |
 | B5 | Ecuación que no encaja en ningún método | Mensaje claro, sin inventar pasos |
+
+## Posibles errores nuevos (detectados al implementar; por confirmar con la hoja original)
+
+| Id | Caso | Respuesta correcta | Qué dice el texto (según la foto) |
+|----|------|--------------------|-----------------------------------|
+| A16 (por confirmar, p. 54) | y''+5y'+6y = 1/(1+e^(2x)) | y = C1 e^(-2x) + C2 e^(-3x) + ½ln(e^(2x)+1) e^(-2x) + (arctg(e^x) − e^x) e^(-3x) | ½ln(e^(2x)+1) e^(-3x) + (arctg(e^x) − e^x) e^(-2x): exponentes cambiados |
+
+Mientras A16 no se confirme, el programa resuelve lo correcto y la nota sale marcada "(por confirmar)"; la prueba golden no depende de la nota.

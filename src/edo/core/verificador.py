@@ -65,7 +65,7 @@ def _derivadas_explicitas(ed: ED, f: sp.Expr) -> sp.Expr:
     e = ed.expr
     for d in sorted(e.atoms(sp.Derivative), key=lambda d: -d.derivative_count):
         e = e.subs(d, sp.diff(f, x, d.derivative_count))
-    return e.subs(y(x), f)
+    return e.xreplace({y(x): f})
 
 
 def verificar_explicita(ed: ED, f: sp.Expr) -> Verificacion:

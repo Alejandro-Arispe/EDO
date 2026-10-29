@@ -86,18 +86,32 @@ def integ(expr: sp.Expr, var: sp.Symbol) -> tuple[sp.Expr, list[str], str]:
     def _sec_csc(e):
         return e.replace(lambda a: isinstance(a, sp.Pow) and isinstance(a.base, (sp.cos, sp.sin)) and a.exp.is_negative,
                          lambda a: (sp.sec if isinstance(a.base, sp.cos) else sp.csc)(a.base.args[0]) ** (-a.exp))
-    for g in (_sec_csc, sp.expand, _agrupar_cociente, lambda e: sp.apart(e, var), sp.simplify):
+    def _pitagoras(e, por):
+        s = e.replace(sp.tan, lambda u: sp.sin(u) / sp.cos(u)).replace(sp.cot, lambda u: sp.cos(u) / sp.sin(u))
+        s = s.replace(sp.sec, lambda u: 1 / sp.cos(u)).replace(sp.csc, lambda u: 1 / sp.sin(u))
+        s = sp.expand(s)
+        a, b = (sp.sin, sp.cos) if por == "sin" else (sp.cos, sp.sin)
+        s = s.replace(lambda q: isinstance(q, sp.Pow) and isinstance(q.base, a) and q.exp == 2,
+                      lambda q: 1 - b(q.base.args[0]) ** 2)
+        return _sec_csc(sp.expand(s))
+    def _solo_sen_cos(e):
+        s = e.replace(sp.tan, lambda u: sp.sin(u) / sp.cos(u)).replace(sp.cot, lambda u: sp.cos(u) / sp.sin(u))
+        return sp.expand(s.replace(sp.sec, lambda u: 1 / sp.cos(u)).replace(sp.csc, lambda u: 1 / sp.sin(u)))
+    for g in (_sec_csc, _solo_sen_cos, lambda e: _pitagoras(e, "sin"), lambda e: _pitagoras(e, "cos"), lambda e: e.rewrite(sp.cot), sp.expand, _agrupar_cociente, lambda e: sp.apart(e, var), sp.simplify):
         try:
             v = g(expr)
         except Exception:
             continue
         if v != expr and v not in variantes:
             variantes.append(v)
-    r = None
+    mejor = None
     for v in variantes:
         r = integrar(v, var)
         if r.valor is not None:
-            break
+            costo = sp.count_ops(r.valor)
+            if mejor is None or costo < mejor[0]:
+                mejor = (costo, r)
+    r = mejor[1] if mejor else integrar(expr, var)
     if r.valor is None:
         return sp.Integral(expr, var), [f"La integral de {latex(expr)} no es elemental y queda indicada."], "integral no elemental"
     reglas = []

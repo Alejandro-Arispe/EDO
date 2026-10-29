@@ -18,4 +18,4 @@
 - {id: t4-homog-3, ed: "y'' + 2y' + 3y = 0", constantes: 2, ref: "texto p.46 (complejas)"}
 - {id: t4-homog-4, ed: "y'' - 5y' + 2y = 0", constantes: 2, ref: "raíces (5±√17)/2"}
 - {id: B3, ed: "y^(9) - y^(7) + 273y^(5) - 820y''' + 576y' = 0", constantes: 9, numerica: true, ref: "DISCREPANCIAS B3"}
-- {id: B4, ed: "2y'' + 2y' + y = 4 sqrt(x)", ninguno: true, ref: "DISCREPANCIAS B4 (variación de parámetros, F5)"}
+- {id: sin-metodo, ed: "x y'' + y = 0", ninguno: true, ref: "coeficiente variable: fuera de F4 y F5 (F6)"}

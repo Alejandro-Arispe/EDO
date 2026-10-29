@@ -1,0 +1,12 @@
+# Variación de parámetros (Tema 4 del programa). yp se compara módulo soluciones de la homogénea.
+- {id: t5-csc, ed: "y'' + 25y = csc(5x)", yp: "-x cos(5x)/5 + ln(sen(5x)) sen(5x)/25", ref: "texto p.52-53"}
+- {id: t5-ej2, ed: "y'' cos(x/2) + 1/4 y cos(x/2) = 1", yp: "2x sen(x/2) + 2 ln(cos(x)+1) cos(x/2)", ref: "texto p.54 ej.2 (con factor común cos(x/2))"}
+- {id: t5-ej3, ed: "y'' + 5y' + 6y = 1/(1+e^(2x))", yp: "ln(e^(2x)+1) e^(-2x)/2 + (arctg(e^x) - e^x) e^(-3x)", ref: "texto p.54 ej.3 (exponentes corregidos; ver DISCREPANCIAS A16)"}
+- {id: II-eval-3, ed: "y'' - 3y' + 2y = e^(2x)/(1+e^x)", yp: "-e^x ln(1+e^x) + e^(2x)(x - ln(1+e^x))", ref: "II Evaluación p.7 ej.3"}
+- {id: t5-an, ed: "3y'' + 3y = sec(x)", yp: "(x sen(x) + ln(cos(x)) cos(x))/3", ref: "coeficiente principal distinto de 1"}
+- {id: t5-tg, ed: "y'' + y = tg(x)", yp: "-cos(x) ln(sec(x)+tg(x))", ref: "estándar"}
+- {id: t5-sec3, ed: "y'' + y = sec(x)^3", yp: "sen(x) tg(x) - sec(x)/2", ref: "estándar"}
+- {id: t5-orden3, ed: "y''' - y' = x", yp: "-x^2/2", ref: "orden 3"}
+- {id: t5-orden3-b, ed: "y''' - 3y'' + 3y' - y = e^x ln(x)", ref: "orden 3, raíz triple (integrales de x^k ln x)"}
+- {id: B4, ed: "2y'' + 2y' + y = 4 sqrt(x)", elemental: false, ref: "DISCREPANCIAS B4"}
+- {id: t5-cond, ed: "y'' + y = tg(x)", condiciones: "y(0)=1, y'(0)=0", solucion: "-cos(x) ln(sec(x)+tg(x)) + sen(x) + cos(x)", ref: "con condiciones iniciales"}

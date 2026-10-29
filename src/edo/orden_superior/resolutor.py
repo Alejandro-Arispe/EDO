@@ -4,14 +4,15 @@ from __future__ import annotations
 from ..core.lector import ED
 from ..core.paso import Resultado
 from ..primer_orden.base import NoAplica
-from . import lineal_cc
+from . import lineal_cc, variacion
 
 METODOS = {
     "abreviado": ("Método abreviado (operador D)", lineal_cc.aplica_abreviado, lineal_cc.resolver_abreviado),
     "coeficientes_indeterminados": ("Coeficientes indeterminados", lineal_cc.aplica_coef_indeterminados,
                                     lineal_cc.resolver_coef_indeterminados),
+    "variacion_parametros": ("Variación de parámetros", variacion.aplica_variacion, variacion.resolver_variacion),
 }
-PREFERENCIA = ["abreviado", "coeficientes_indeterminados"]
+PREFERENCIA = ["abreviado", "coeficientes_indeterminados", "variacion_parametros"]
 
 
 def clasificar_metodos(ed: ED) -> list[dict]:
@@ -45,16 +46,11 @@ def resolver(ed: ED, metodo: str | None = None, condiciones=None) -> Resultado:
 def _ninguno(ed: ED) -> Resultado:
     res = Resultado("ninguno")
     res.advertencias.append(
-        "No aplica con los métodos del temario implementados hasta ahora (método abreviado y coeficientes indeterminados). "
-        "Si la ecuación es lineal de coeficientes constantes y Q(x) no es de la forma xᵏ e^(ax) sen/cos(bx), o si los coeficientes "
-        "son variables (Euler, Cauchy-Legendre), faltan las fases de variación de parámetros y coeficiente variable.")
+        "No aplica con los métodos del temario implementados hasta ahora (método abreviado, coeficientes indeterminados "
+        "y variación de parámetros para coeficientes constantes). Si los coeficientes son variables (Euler, Cauchy-Legendre) "
+        "falta la fase de coeficiente variable.")
     try:
         lineal_cc.leer_lineal(ed)
     except NoAplica as exc:
         res.advertencias.append("Se intentó — coeficientes constantes: " + str(exc))
-    else:
-        try:
-            lineal_cc._grupos(lineal_cc.leer_lineal(ed).Q)
-        except NoAplica as exc:
-            res.advertencias.append("Se intentó — forma de Q(x): " + str(exc))
     return res

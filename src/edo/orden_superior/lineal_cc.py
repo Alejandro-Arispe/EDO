@@ -40,6 +40,7 @@ class EDLineal:
     n: int
     P: sp.Expr          # F(D)
     Q: sp.Expr          # término independiente
+    factor: sp.Expr = sp.Integer(1)  # factor común h(x) que se dividió, si lo hubo
 
     @property
     def homogenea(self) -> bool:
@@ -54,16 +55,25 @@ def leer_lineal(ed: ED) -> EDLineal:
     coefs = []
     for k, d in ders.items():
         a = sp.diff(F, d)
-        if a.has(x) or a.has(y) or a.has(sp.Derivative):
-            raise NoAplica("Los coeficientes no son constantes (o la ecuación no es lineal).")
-        coefs.append(sp.nsimplify(a) if a.is_Float is False else a)
+        if a.has(y) or a.has(sp.Derivative):
+            raise NoAplica("La ecuación no es lineal en y y sus derivadas.")
+        coefs.append(a)
     resto = F.subs({d: 0 for d in reversed(list(ders.values()))})
     if sp.simplify(F - (sum(a * d for a, d in zip(coefs, ders.values())) + resto)) != 0:
         raise NoAplica("La ecuación no es lineal en y y sus derivadas.")
-    P = sum(a * D ** k for k, a in enumerate(coefs))
     if coefs[-1] == 0:
         raise NoAplica("El coeficiente de la derivada mayor es cero.")
-    return EDLineal(ed, ed.orden, sp.expand(P), sp.expand(-resto))
+    factor = sp.Integer(1)
+    if any(a.has(x) for a in coefs):
+        # un factor común h(x) (p. ej. y'' cos(x/2) + y cos(x/2)/4 = 1) se pasa dividiendo
+        h = coefs[-1]
+        razones = [sp.simplify(a / h) for a in coefs]
+        if any(r.has(x) for r in razones):
+            raise NoAplica("Los coeficientes no son constantes (ni son constantes salvo un factor común).")
+        coefs, resto, factor = razones, sp.simplify(resto / h), h
+    coefs = [sp.nsimplify(a) if a.is_Float is False else a for a in coefs]
+    P = sum(a * D ** k for k, a in enumerate(coefs))
+    return EDLineal(ed, ed.orden, sp.expand(P), sp.expand(-resto), factor)
 
 
 def aplica_abreviado(ed: ED) -> str | None:
@@ -134,6 +144,10 @@ def solucion_homogenea(L_: EDLineal, res: Resultado):
     res.pasos.append(Paso("Escribir el operador lineal D = d/dx", "y⁽ᵏ⁾ = Dᵏ y", L_.ed.lhs.__str__() if False else latex(L_.ed.lhs) + " = " + latex(L_.ed.rhs),
                           rf"\left({latex(L_.P)}\right)y = {latex(L_.Q)}" if not L_.homogenea else rf"\left({latex(L_.P)}\right)y = 0",
                           "Se escribe la ecuación con $F(D)\\,y = Q(x)$. La solución es $y = y_h + y_p$."))
+    if L_.factor != 1:
+        res.pasos.append(Paso("Dividir entre el factor común de los coeficientes", "a_k(x) = h(x)·c_k", "",
+                              rf"\text{{dividir entre }} {latex(L_.factor)}\ \Rightarrow\ \left({latex(L_.P)}\right)y = {latex(L_.Q)}",
+                              "Todos los coeficientes tienen el mismo factor $h(x)$: al dividir quedan constantes y el término independiente es $Q(x)/h(x)$."))
     raices, exactas = raices_caracteristicas(L_.P)
     p_fact = sp.factor(L_.P) if exactas else None
     res.pasos.append(Paso("Resolver la ecuación característica para y_h (F(D) = 0)", "F(D) = 0",
@@ -350,7 +364,7 @@ def _finalizar(res: Resultado, L_: EDLineal, general: sp.Expr, cs, condiciones, 
     if yp is not None:
         nota = discrepancias.nota("particular", L_.ed)
         for p in res.pasos:
-            if p.titulo.startswith("Solución particular y_p"):
+            if "Solución particular y_p" in p.titulo:
                 p.discrepancia = (NOTA_A15 + (" " + nota if nota else ""))
     if condiciones:
         det = determinar_constantes(L_.ed, sp.Symbol("y"), general, condiciones)

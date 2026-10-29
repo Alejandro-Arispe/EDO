@@ -137,7 +137,7 @@ def _atomo_exponente(s: str, i: int) -> int:
 def _fin_argumento(s: str, i: int) -> int:
     """Fin (exclusivo) del argumento de una función que empieza en s[i]."""
     if i < len(s) and s[i] == "(":
-        j = _grupo(s, i) + 1
+        return _grupo(s, i) + 1   # sen(x)^2 = (sen x)^2: el exponente no entra en el argumento
     else:
         j = i
         if j < len(s) and s[j] in "+-":

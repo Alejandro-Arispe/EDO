@@ -10,6 +10,8 @@ def simplificar(e: sp.Expr) -> sp.Expr:
     ``sp.simplify`` a veces cambia sen/cos por formas que el docente no escribiría
     (p. ej. sen(2x) o sen(x+π/4)); aquí solo se usan operaciones algebraicas.
     """
+    e = e.replace(lambda a: isinstance(a, sp.log) and isinstance(a.args[0], sp.exp),
+                  lambda a: a.args[0].args[0])        # ln(e^u) = u (u real)
     candidatas = [e]
     for f in (sp.expand, sp.factor_terms, sp.together, sp.factor, sp.cancel, sp.powsimp):
         try:

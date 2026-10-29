@@ -56,11 +56,11 @@ def test_propiedad_raices_a_solucion(reales, betas):
 
 
 def test_forma_de_q_no_soportada():
-    assert clasificar_metodos(leer_ed("2y'' + 2y' + y = 4 sqrt(x)")) == []
-    assert clasificar_metodos(leer_ed("y'' + y = tg(x)")) == []
+    assert [m["metodo"] for m in clasificar_metodos(leer_ed("2y'' + 2y' + y = 4 sqrt(x)"))] == ["variacion_parametros"]
+    assert [m["metodo"] for m in clasificar_metodos(leer_ed("y'' + y = tg(x)"))] == ["variacion_parametros"]
     assert clasificar_metodos(leer_ed("x y'' + y = 0")) == []
     ids = [m["metodo"] for m in clasificar_metodos(leer_ed("y'' + y = x"))]
-    assert ids == ["abreviado", "coeficientes_indeterminados"]
+    assert ids == ["abreviado", "coeficientes_indeterminados", "variacion_parametros"]
 
 
 def test_grupos_de_q():
@@ -78,6 +78,26 @@ def test_api_orden_superior():
     assert r["verificacion"]["ok"] and "x - 2" in r["pasos"][-2]["despues_latex"]
     assert any(p["discrepancia"] and "A11a" in p["discrepancia"] for p in r["pasos"])
     r = c.post("/clasificar", json={"entrada": "y'' + 4y = 3x^3"}).json()
-    assert [m["metodo"] for m in r["metodos"]] == ["abreviado", "coeficientes_indeterminados"]
-    r = c.post("/resolver", json={"entrada": "2y''+2y'+y=4 sqrt(x)"}).json()
+    assert [m["metodo"] for m in r["metodos"]] == ["abreviado", "coeficientes_indeterminados", "variacion_parametros"]
+    r = c.post("/resolver", json={"entrada": "x y'' + y = 0"}).json()
     assert r["metodo"] == "ninguno" and not r["pasos"]
+
+
+@_s
+@given(st.lists(st.integers(-2, 2), min_size=2, max_size=3), _forzante)
+def test_propiedad_variacion_coincide_con_abreviado(raices, Q):
+    """Las dos y_p deben diferir en una solución de la homogénea."""
+    P = sp.expand(sp.Mul(*[(D - r) for r in raices]))
+    ed = _ed_desde_poli(P, Q)
+    v = resolver(ed, "variacion_parametros")
+    a = resolver(ed, "abreviado")
+    assert v.verificacion.ok
+    dif = v.particular - a.particular
+    pol = sp.Poly(P, D)
+    assert es_cero(sum(co * sp.diff(dif, x, k) for (k,), co in pol.terms())).ok
+
+
+def test_variacion_orden_n_y_coeficiente_principal():
+    r = resolver(leer_ed("2y''' - 2y'' - 4y' + 4y = e^x / (1 + e^x)"), "variacion_parametros")
+    assert r.verificacion.ok and len(r.constantes) == 3
+    assert any(p.titulo.startswith("Dejar el coeficiente principal") for p in r.pasos)
