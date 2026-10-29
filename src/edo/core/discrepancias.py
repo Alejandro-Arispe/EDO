@@ -43,6 +43,10 @@ REGISTRO: list[Entrada] = [
     Entrada("A11b", "y''-4y'+4y=x e^(2x)", None, "particular",
             "La raíz 2 tiene multiplicidad 2: se multiplica por x² (s = multiplicidad, no «grado de Q ≤ orden»). "
             "y_p = (x³/6)e^(2x)."),
+    Entrada("A16", "y''+5y'+6y=1/(1+e^(2x))", None, "particular",
+            "(Por confirmar con la hoja original, p. 54.) Como se lee en la foto, el texto da "
+            "½ln(e^(2x)+1)e^(-3x) + (arctg(e^x) − e^x)e^(-2x). Con y₁=e^(-2x), y₂=e^(-3x) los exponentes quedan al revés: "
+            "y_p = ½ln(e^(2x)+1)e^(-2x) + (arctg(e^x) − e^x)e^(-3x)."),
     Entrada("A4","(2xy+3)dy-y^2dx=0", None, "solucion",
             "El texto escribió x/y² + 3/(4y⁴) = C. Al integrar queda ∫3/y⁴ dy = −1/y³, así que la solución correcta es "
             "x/y² + 1/y³ = C."),
