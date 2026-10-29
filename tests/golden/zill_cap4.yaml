@@ -1,0 +1,90 @@
+# Zill-Wright 8.ª ed., capítulo 4: ejercicios de número impar con la respuesta del apéndice (RES-4 a RES-6).
+# La variable independiente es x e y la incógnita (el libro usa t, r, u, ... en algunos). Constantes C1, C2, ...
+# solucion: general (o particular si hay condiciones). dominio: [a, b] donde se compara (ramas de ln|·|, etc.).
+# elemental: false  -> la integral de la variación de parámetros no es elemental (solo se verifica).
+
+# ---- 4.3 Homogéneas de coeficientes constantes (p. 133-134)
+- {id: zill-4.3-1, ed: "4y'' + y' = 0", solucion: "C1 + C2 e^(-x/4)", ref: "Zill 4.3 #1"}
+- {id: zill-4.3-3, ed: "y'' - y' - 6y = 0", solucion: "C1 e^(3x) + C2 e^(-2x)", ref: "Zill 4.3 #3"}
+- {id: zill-4.3-5, ed: "y'' + 8y' + 16y = 0", solucion: "C1 e^(-4x) + C2 x e^(-4x)", ref: "Zill 4.3 #5"}
+- {id: zill-4.3-7, ed: "12y'' - 5y' - 2y = 0", solucion: "C1 e^(2x/3) + C2 e^(-x/4)", ref: "Zill 4.3 #7"}
+- {id: zill-4.3-9, ed: "y'' + 9y = 0", solucion: "C1 cos(3x) + C2 sen(3x)", ref: "Zill 4.3 #9"}
+- {id: zill-4.3-11, ed: "y'' - 4y' + 5y = 0", solucion: "e^(2x)(C1 cos(x) + C2 sen(x))", ref: "Zill 4.3 #11"}
+- {id: zill-4.3-13, ed: "3y'' + 2y' + y = 0", solucion: "e^(-x/3)(C1 cos(sqrt(2) x/3) + C2 sen(sqrt(2) x/3))", ref: "Zill 4.3 #13"}
+- {id: zill-4.3-15, ed: "y''' - 4y'' - 5y' = 0", solucion: "C1 + C2 e^(-x) + C3 e^(5x)", ref: "Zill 4.3 #15"}
+- {id: zill-4.3-17, ed: "y''' - 5y'' + 3y' + 9y = 0", solucion: "C1 e^(-x) + C2 e^(3x) + C3 x e^(3x)", ref: "Zill 4.3 #17"}
+- {id: zill-4.3-19, ed: "y''' + y'' - 2y = 0", solucion: "C1 e^x + e^(-x)(C2 cos(x) + C3 sen(x))", ref: "Zill 4.3 #19"}
+- {id: zill-4.3-21, ed: "y''' + 3y'' + 3y' + y = 0", solucion: "C1 e^(-x) + C2 x e^(-x) + C3 x^2 e^(-x)", ref: "Zill 4.3 #21"}
+- {id: zill-4.3-23, ed: "y'''' + y''' + y'' = 0", solucion: "C1 + C2 x + e^(-x/2)(C3 cos(sqrt(3) x/2) + C4 sen(sqrt(3) x/2))", ref: "Zill 4.3 #23"}
+- {id: zill-4.3-25, ed: "16y'''' + 24y'' + 9y = 0", solucion: "C1 cos(sqrt(3) x/2) + C2 sen(sqrt(3) x/2) + C3 x cos(sqrt(3) x/2) + C4 x sen(sqrt(3) x/2)", ref: "Zill 4.3 #25"}
+- {id: zill-4.3-27, ed: "y^(5) + 5y^(4) - 2y''' - 10y'' + y' + 5y = 0", solucion: "C1 e^x + C2 x e^x + C3 e^(-x) + C4 x e^(-x) + C5 e^(-5x)", ref: "Zill 4.3 #27"}
+- {id: zill-4.3-29, ed: "y'' + 16y = 0", condiciones: "y(0)=2, y'(0)=-2", solucion: "2 cos(4x) - sen(4x)/2", ref: "Zill 4.3 #29"}
+- {id: zill-4.3-31, ed: "y'' - 4y' - 5y = 0", condiciones: "y(1)=0, y'(1)=2", solucion: "-e^(-(x-1))/3 + e^(5(x-1))/3", ref: "Zill 4.3 #31"}
+- {id: zill-4.3-33, ed: "y'' + y' + 2y = 0", condiciones: "y(0)=0, y'(0)=0", solucion: "0", ref: "Zill 4.3 #33"}
+- {id: zill-4.3-35, ed: "y''' + 12y'' + 36y' = 0", condiciones: "y(0)=0, y'(0)=1, y''(0)=-7", solucion: "5/36 - 5 e^(-6x)/36 + x e^(-6x)/6", ref: "Zill 4.3 #35"}
+
+# ---- 4.3 ED a partir de la solución general (#49-57): raíces -> ED
+- {id: zill-4.3-49, raices: "1, 5", poli: "D^2 - 6D + 5", ref: "Zill 4.3 #49 (y'' − 6y' + 5y = 0)"}
+- {id: zill-4.3-51, raices: "0, 2", poli: "D^2 - 2D", ref: "Zill 4.3 #51 (y'' − 2y' = 0)"}
+- {id: zill-4.3-53, raices: "3i, -3i", poli: "D^2 + 9", ref: "Zill 4.3 #53 (y'' + 9y = 0)"}
+- {id: zill-4.3-55, raices: "-1+i, -1-i", poli: "D^2 + 2D + 2", ref: "Zill 4.3 #55 (y'' + 2y' + 2y = 0)"}
+- {id: zill-4.3-57, raices: "0, 0, 8", poli: "D^3 - 8D^2", ref: "Zill 4.3 #57 (y''' − 8y'' = 0)"}
+
+# ---- 4.4 Coeficientes indeterminados (p. 143)
+- {id: zill-4.4-1, ed: "y'' + 3y' + 2y = 6", solucion: "C1 e^(-x) + C2 e^(-2x) + 3", ref: "Zill 4.4 #1"}
+- {id: zill-4.4-3, ed: "y'' - 10y' + 25y = 30x + 3", solucion: "C1 e^(5x) + C2 x e^(5x) + 6x/5 + 3/5", ref: "Zill 4.4 #3"}
+- {id: zill-4.4-5, ed: "y''/4 + y' + y = x^2 - 2x", solucion: "C1 e^(-2x) + C2 x e^(-2x) + x^2 - 4x + 7/2", ref: "Zill 4.4 #5"}
+- {id: zill-4.4-7, ed: "y'' + 3y = -48x^2 e^(3x)", solucion: "C1 cos(sqrt(3) x) + C2 sen(sqrt(3) x) + (-4x^2 + 4x - 4/3) e^(3x)", ref: "Zill 4.4 #7"}
+- {id: zill-4.4-9, ed: "y'' - y' = -3", solucion: "C1 + C2 e^x + 3x", ref: "Zill 4.4 #9"}
+- {id: zill-4.4-11, ed: "y'' - y' + y/4 = 3 + e^(x/2)", solucion: "C1 e^(x/2) + C2 x e^(x/2) + 12 + x^2 e^(x/2)/2", ref: "Zill 4.4 #11"}
+- {id: zill-4.4-13, ed: "y'' + 4y = 3 sen(2x)", solucion: "C1 cos(2x) + C2 sen(2x) - 3x cos(2x)/4", ref: "Zill 4.4 #13"}
+- {id: zill-4.4-15, ed: "y'' + y = 2x sen(x)", solucion: "C1 cos(x) + C2 sen(x) - x^2 cos(x)/2 + x sen(x)/2", ref: "Zill 4.4 #15"}
+- {id: zill-4.4-17, ed: "y'' - 2y' + 5y = e^x cos(2x)", solucion: "C1 e^x cos(2x) + C2 e^x sen(2x) + x e^x sen(2x)/4", ref: "Zill 4.4 #17"}
+- {id: zill-4.4-19, ed: "y'' + 2y' + y = sen(x) + 3 cos(2x)", solucion: "C1 e^(-x) + C2 x e^(-x) - cos(x)/2 + 12 sen(2x)/25 - 9 cos(2x)/25", ref: "Zill 4.4 #19"}
+- {id: zill-4.4-21, ed: "y''' - 6y'' = 3 - cos(x)", solucion: "C1 + C2 x + C3 e^(6x) - x^2/4 - 6 cos(x)/37 + sen(x)/37", ref: "Zill 4.4 #21"}
+- {id: zill-4.4-23, ed: "y''' - 3y'' + 3y' - y = x - 4e^x", solucion: "C1 e^x + C2 x e^x + C3 x^2 e^x - x - 3 - 2 x^3 e^x/3", ref: "Zill 4.4 #23"}
+- {id: zill-4.4-25, ed: "y'''' + 2y'' + y = (x-1)^2", solucion: "C1 cos(x) + C2 sen(x) + C3 x cos(x) + C4 x sen(x) + x^2 - 2x - 3", ref: "Zill 4.4 #25"}
+- {id: zill-4.4-27, ed: "y'' + 4y = -2", condiciones: "y(pi/8)=1/2, y'(pi/8)=2", solucion: "sqrt(2) sen(2x) - 1/2", ref: "Zill 4.4 #27"}
+- {id: zill-4.4-29, ed: "5y'' + y' = -6x", condiciones: "y(0)=0, y'(0)=-10", solucion: "-200 + 200 e^(-x/5) - 3x^2 + 30x", ref: "Zill 4.4 #29"}
+- {id: zill-4.4-31, ed: "y'' + 4y' + 5y = 35 e^(-4x)", condiciones: "y(0)=-3, y'(0)=1", solucion: "-10 e^(-2x) cos(x) + 9 e^(-2x) sen(x) + 7 e^(-4x)", ref: "Zill 4.4 #31"}
+- {id: zill-4.4-35, ed: "y''' - 2y'' + y' = 2 - 24e^x + 40e^(5x)", condiciones: "y(0)=1/2, y'(0)=5/2, y''(0)=-9/2", solucion: "11 - 11 e^x + 9 x e^x + 2x - 12 x^2 e^x + e^(5x)/2", ref: "Zill 4.4 #35"}
+
+# ---- 4.6 Variación de parámetros (p. 156-157)
+- {id: zill-4.6-1, ed: "y'' + y = sec(x)", metodo: variacion_parametros, dominio: [0.1, 1.4], solucion: "C1 cos(x) + C2 sen(x) + x sen(x) + cos(x) ln(cos(x))", ref: "Zill 4.6 #1"}
+- {id: zill-4.6-3, ed: "y'' + y = sen(x)", metodo: variacion_parametros, solucion: "C1 cos(x) + C2 sen(x) - x cos(x)/2", ref: "Zill 4.6 #3"}
+- {id: zill-4.6-5, ed: "y'' + y = cos(x)^2", metodo: variacion_parametros, solucion: "C1 cos(x) + C2 sen(x) + 1/2 - cos(2x)/6", ref: "Zill 4.6 #5"}
+- {id: zill-4.6-7, ed: "y'' - y = cosh(x)", metodo: variacion_parametros, solucion: "C1 e^x + C2 e^(-x) + x senh(x)/2", ref: "Zill 4.6 #7"}
+- {id: zill-4.6-9, ed: "y'' - 4y = e^(2x)/x", metodo: variacion_parametros, elemental: false, ref: "Zill 4.6 #9 (la respuesta del libro lleva ∫ e^(4t)/t dt)"}
+- {id: zill-4.6-11, ed: "y'' + 3y' + 2y = 1/(1+e^x)", metodo: variacion_parametros, solucion: "C1 e^(-x) + C2 e^(-2x) + (e^(-x) + e^(-2x)) ln(1 + e^x)", ref: "Zill 4.6 #11"}
+- {id: zill-4.6-13, ed: "y'' + 3y' + 2y = sen(e^x)", metodo: variacion_parametros, solucion: "C1 e^(-2x) + C2 e^(-x) - e^(-2x) sen(e^x)", ref: "Zill 4.6 #13"}
+- {id: zill-4.6-15, ed: "y'' + 2y' + y = e^(-x) ln(x)", metodo: variacion_parametros, solucion: "C1 e^(-x) + C2 x e^(-x) + x^2 e^(-x) ln(x)/2 - 3 x^2 e^(-x)/4", ref: "Zill 4.6 #15 (t → x)"}
+- {id: zill-4.6-17, ed: "3y'' - 6y' + 6y = e^x sec(x)", metodo: variacion_parametros, dominio: [0.1, 1.4], solucion: "C1 e^x sen(x) + C2 e^x cos(x) + x e^x sen(x)/3 + e^x cos(x) ln(cos(x))/3", ref: "Zill 4.6 #17"}
+- {id: zill-4.6-19, ed: "4y'' - y = x e^(x/2)", metodo: variacion_parametros, condiciones: "y(0)=1, y'(0)=0", solucion: "e^(-x/2)/4 + 3 e^(x/2)/4 + x^2 e^(x/2)/8 - x e^(x/2)/4", ref: "Zill 4.6 #19"}
+- {id: zill-4.6-21, ed: "y'' + 2y' - 8y = 2e^(-2x) - e^(-x)", metodo: variacion_parametros, condiciones: "y(0)=1, y'(0)=0", solucion: "4 e^(-4x)/9 + 25 e^(2x)/36 - e^(-2x)/4 + e^(-x)/9", ref: "Zill 4.6 #21"}
+- {id: zill-4.6-25, ed: "y''' + y' = tg(x)", metodo: variacion_parametros, dominio: [0.1, 1.4], solucion: "C1 + C2 cos(x) + C3 sen(x) - ln(cos(x)) - sen(x) ln(sec(x) + tg(x))", ref: "Zill 4.6 #25"}
+- {id: zill-4.6-27, ed: "y''' - 2y'' - y' + 2y = e^(4x)", metodo: variacion_parametros, solucion: "C1 e^(-x) + C2 e^x + C3 e^(2x) + e^(4x)/30", ref: "Zill 4.6 #27"}
+
+# ---- 4.7 Ecuación de Cauchy-Euler (p. 162-163)
+- {id: zill-4.7-1, ed: "x^2 y'' - 2y = 0", solucion: "C1/x + C2 x^2", ref: "Zill 4.7 #1"}
+- {id: zill-4.7-3, ed: "x y'' + y' = 0", solucion: "C1 + C2 ln(x)", ref: "Zill 4.7 #3"}
+- {id: zill-4.7-5, ed: "x^2 y'' + x y' + 4y = 0", solucion: "C1 cos(2 ln(x)) + C2 sen(2 ln(x))", ref: "Zill 4.7 #5"}
+- {id: zill-4.7-7, ed: "x^2 y'' - 3x y' - 2y = 0", solucion: "C1 x^(2 - sqrt(6)) + C2 x^(2 + sqrt(6))", ref: "Zill 4.7 #7"}
+- {id: zill-4.7-9, ed: "25x^2 y'' + 25x y' + y = 0", solucion: "C1 cos(ln(x)/5) + C2 sen(ln(x)/5)", ref: "Zill 4.7 #9"}
+- {id: zill-4.7-11, ed: "x^2 y'' + 5x y' + 4y = 0", solucion: "C1 x^(-2) + C2 x^(-2) ln(x)", ref: "Zill 4.7 #11"}
+- {id: zill-4.7-13, ed: "3x^2 y'' + 6x y' + y = 0", solucion: "x^(-1/2)(C1 cos(sqrt(3) ln(x)/6) + C2 sen(sqrt(3) ln(x)/6))", ref: "Zill 4.7 #13"}
+- {id: zill-4.7-15, ed: "x^3 y''' - 6y = 0", solucion: "C1 x^3 + C2 cos(sqrt(2) ln(x)) + C3 sen(sqrt(2) ln(x))", ref: "Zill 4.7 #15"}
+- {id: zill-4.7-17, ed: "x y'''' + 6y''' = 0", solucion: "C1 + C2 x + C3 x^2 + C4 x^(-3)", ref: "Zill 4.7 #17"}
+- {id: zill-4.7-19, ed: "x y'' - 4y' = x^4", solucion: "C1 + C2 x^5 + x^5 ln(x)/5", ref: "Zill 4.7 #19"}
+- {id: zill-4.7-21, ed: "x^2 y'' - x y' + y = 2x", solucion: "C1 x + C2 x ln(x) + x ln(x)^2", ref: "Zill 4.7 #21"}
+- {id: zill-4.7-23, ed: "x^2 y'' + x y' - y = ln(x)", solucion: "C1/x + C2 x - ln(x)", ref: "Zill 4.7 #23"}
+- {id: zill-4.7-25, ed: "x^2 y'' + 3x y' = 0", condiciones: "y(1)=0, y'(1)=4", solucion: "2 - 2 x^(-2)", ref: "Zill 4.7 #25"}
+- {id: zill-4.7-27, ed: "x^2 y'' + x y' + y = 0", condiciones: "y(1)=1, y'(1)=2", solucion: "cos(ln(x)) + 2 sen(ln(x))", ref: "Zill 4.7 #27"}
+- {id: zill-4.7-29, ed: "x y'' + y' = x", condiciones: "y(1)=1, y'(1)=-1/2", solucion: "3/4 - ln(x) + x^2/4", ref: "Zill 4.7 #29"}
+- {id: zill-4.7-31, ed: "x^2 y'' + 9x y' - 20y = 0", solucion: "C1 x^(-10) + C2 x^2", ref: "Zill 4.7 #31"}
+- {id: zill-4.7-33, ed: "x^2 y'' + 10x y' + 8y = x^2", solucion: "C1/x + C2 x^(-8) + x^2/30", ref: "Zill 4.7 #33"}
+- {id: zill-4.7-35, ed: "x^2 y'' - 3x y' + 13y = 4 + 3x", solucion: "x^2 (C1 cos(3 ln(x)) + C2 sen(3 ln(x))) + 4/13 + 3x/10", ref: "Zill 4.7 #35"}
+- {id: zill-4.7-39, ed: "(x+3)^2 y'' - 8(x+3) y' + 14y = 0", solucion: "C1 (x+3)^2 + C2 (x+3)^7", ref: "Zill 4.7 #39"}
+# El apéndice del libro da C1 cos(ln(x+2)) + C2 sen(ln(x+2)), que corresponde a (x+2)^2 y'' + (x+2) y' + y = 0;
+# para el enunciado impreso (con −(x+2)y') la ecuación auxiliar es (m−1)^2 = 0 y la solución es la de abajo.
+- {id: zill-4.7-41, ed: "(x+2)^2 y'' - (x+2) y' + y = 0", solucion: "(x+2)(C1 + C2 ln(x+2))", ref: "Zill 4.7 #41 (discrepancia enunciado/respuesta del libro)"}
+- {id: zill-4.7-41-trig, ed: "(x+2)^2 y'' + (x+2) y' + y = 0", solucion: "C1 cos(ln(x+2)) + C2 sen(ln(x+2))", ref: "Zill 4.7 #41 con el signo que da la respuesta impresa"}

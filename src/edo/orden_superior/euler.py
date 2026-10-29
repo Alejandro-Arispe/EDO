@@ -34,6 +34,7 @@ class Euler:
     b: sp.Expr
     c: list               # c_k tal que a_k(x) = c_k u^k
     Q: sp.Expr
+    s: int = 0            # a_k(x) = c_k u^(k+s): se divide la ecuación entre u^s
 
 
 def _leer_euler(ed: ED) -> Euler:
@@ -54,18 +55,19 @@ def _leer_euler(ed: ED) -> Euler:
         _, factores = sp.factor_list(sp.Poly(top, x))
     except Exception:
         raise NoAplica("El coeficiente de la derivada mayor no es de la forma c(ax+b)ⁿ.")
-    if len(factores) != 1 or factores[0][0].degree() != 1 or factores[0][1] != ed.orden:
-        raise NoAplica("El coeficiente de la derivada mayor no es de la forma c(ax+b)ⁿ, con n el orden de la ecuación.")
+    if len(factores) != 1 or factores[0][0].degree() != 1 or factores[0][1] < 1:
+        raise NoAplica("El coeficiente de la derivada mayor no es de la forma c(ax+b)^m.")
     lin = factores[0][0]
     a, b = lin.coeff_monomial(x), lin.coeff_monomial(1)
     u = a * x + b
+    s = int(factores[0][1]) - ed.orden      # a_k = c_k u^(k+s); si s = -1: x y'' + y' = 0 se divide entre x
     c = []
     for k, ak in enumerate(coefs):
-        r = sp.simplify(ak / u ** k)
+        r = sp.simplify(ak / u ** (k + s))
         if r.has(x):
-            raise NoAplica(f"El coeficiente de y^({k}) no es c·(ax+b)^{k}: no es una ecuación de Euler / Cauchy-Legendre.")
+            raise NoAplica(f"El coeficiente de y^({k}) no es c·(ax+b)^{k + s}: no es una ecuación de Euler / Cauchy-Legendre.")
         c.append(r)
-    return Euler(ed, ed.orden, a, b, c, sp.simplify(-resto))
+    return Euler(ed, ed.orden, a, b, c, sp.simplify(-resto / u ** s), s)
 
 
 def aplica_euler(ed: ED) -> str | None:
@@ -89,8 +91,9 @@ def resolver_euler(ed: ED, condiciones=None, metodo_t: str | None = None) -> Res
     res = Resultado(f"{tipo} ({latex(u)} = e^t)")
     res.pasos.append(Paso(f"Reconocer la ecuación de {tipo}", "aₖ(x) = cₖ (ax+b)ᵏ",
                           latex(ed.lhs) + " = " + latex(ed.rhs),
-                          r"\ ;\quad ".join(f"a_{{{k}}}(x) = {latex(sp.simplify(ck * u ** k))}" for k, ck in enumerate(E.c) if ck != 0),
-                          f"El coeficiente de cada derivada de orden $k$ es una constante por $({latex(u)})^k$."))
+                          r"\ ;\quad ".join(f"a_{{{k}}}(x) = {latex(sp.simplify(ck * u ** (k + E.s)))}" for k, ck in enumerate(E.c) if ck != 0),
+                          f"El coeficiente de cada derivada de orden $k$ es una constante por $({latex(u)})^{{k{'%+d' % E.s if E.s else ''}}}$"
+                          + (f": se divide la ecuación entre $({latex(u)})^{{{E.s}}}$ para que quede de Euler." if E.s else ".")))
     ops = " ;\\quad ".join(
         rf"({latex(u)})^{{{k}}}y^{{({k})}} = {latex(a ** k) + r'\,' if a != 1 else ''}{latex(_prod_descendente(k))}\,y"
         for k in range(1, n + 1))

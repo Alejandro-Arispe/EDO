@@ -16,15 +16,21 @@ TOL = 1e-7
 
 
 def _numerico(expr: sp.Expr, simbolos: list[sp.Symbol], rng: random.Random,
-              dominio=(0.3, 2.5), puntos: int = N_PUNTOS) -> tuple[bool, str]:
-    """Evalúa expr en ``puntos`` puntos aleatorios. Falla si algún valor no es ~0."""
+              dominio=(0.3, 2.5), puntos: int = N_PUNTOS, ramas: bool = False) -> tuple[bool, str]:
+    """Evalúa expr en ``puntos`` puntos aleatorios. Falla si algún valor no es ~0.
+
+    Con ``ramas=True`` (ED con raíces o valores absolutos) una solución explícita solo vale en las
+    ramas donde la raíz toma el signo correcto: basta que se anule en al menos 5 puntos y en el 20 %
+    de los evaluados (una función incorrecta no se anula en un conjunto así).
+    """
     try:
         f = sp.lambdify(simbolos, expr, modules=["mpmath"])
     except Exception:
         return False, "no se pudo evaluar numéricamente"
-    validos = intentos = 0
-    peor = 0.0
-    while validos < puntos and intentos < 60:
+    validos = intentos = buenos = 0
+    peor = peor_bueno = 0.0
+    limite = 400 if ramas else 60
+    while intentos < limite and (validos < puntos or (ramas and buenos < puntos)):
         intentos += 1
         pt = [rng.uniform(*dominio) for _ in simbolos]
         try:
@@ -33,15 +39,27 @@ def _numerico(expr: sp.Expr, simbolos: list[sp.Symbol], rng: random.Random,
             continue
         if v != v or abs(v) == float("inf"):
             continue
+        if ramas and abs(v.imag) > 1e-9 * (1 + abs(v)):
+            continue   # fuera del dominio real de la solución (p. ej. arcsen x con x > 1)
         escala = max([1.0] + [abs(p) for p in pt])
-        peor = max(peor, abs(v) / escala)
+        err = abs(v) / escala
         validos += 1
+        if err < TOL:
+            buenos += 1
+            peor_bueno = max(peor_bueno, err)
+        else:
+            peor = max(peor, err)
     if validos < puntos:
         return False, "no se pudieron evaluar 5 puntos"
-    return peor < TOL, f"error máximo {peor:.2e}"
+    if peor < TOL:
+        return True, f"error máximo {max(peor, peor_bueno):.2e}"
+    if ramas and buenos >= puntos and buenos >= 0.2 * validos:
+        return True, (f"se anula en {buenos} de {validos} puntos probados: la solución vale en una rama "
+                      "(donde la raíz o el valor absoluto toma el signo correcto)")
+    return False, f"error máximo {peor:.2e}"
 
 
-def es_cero(expr: sp.Expr, simbolos: list[sp.Symbol] | None = None, *, semilla: int = 12345) -> Verificacion:
+def es_cero(expr: sp.Expr, simbolos: list[sp.Symbol] | None = None, *, semilla: int = 12345, ramas: bool = False) -> Verificacion:
     """¿expr ≡ 0? Simbólico y, si no simplifica, numérico."""
     expr = sp.sympify(expr)
     if expr == 0:
@@ -56,7 +74,7 @@ def es_cero(expr: sp.Expr, simbolos: list[sp.Symbol] | None = None, *, semilla: 
     if not simbolos:
         ok, det = _numerico(expr, [], random.Random(semilla), puntos=1)
         return Verificacion(ok, "numérica", det)
-    ok, det = _numerico(expr, simbolos, random.Random(semilla))
+    ok, det = _numerico(expr, simbolos, random.Random(semilla), ramas=ramas)
     return Verificacion(ok, "numérica (5 puntos)", det)
 
 
@@ -71,7 +89,8 @@ def _derivadas_explicitas(ed: ED, f: sp.Expr) -> sp.Expr:
 def verificar_explicita(ed: ED, f: sp.Expr) -> Verificacion:
     """Verifica y = f(x) (f puede llevar constantes C1, C2, ...)."""
     residuo = _derivadas_explicitas(ed, f)
-    return es_cero(residuo)
+    radicales = ed.expr.has(sp.Abs) or any(q.exp.is_Rational and not q.exp.is_Integer for q in ed.expr.atoms(sp.Pow))
+    return es_cero(residuo, ramas=radicales)
 
 
 def derivadas_implicitas(G: sp.Expr, n: int) -> list[sp.Expr]:

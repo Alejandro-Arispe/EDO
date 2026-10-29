@@ -10,7 +10,7 @@ from edo.core.verificador import es_cero
 from edo.primer_orden.base import Solucion, misma_curva
 from edo.primer_orden.resolutor import resolver
 
-CASOS = yaml.safe_load((Path(__file__).parent / "primer_orden.yaml").read_text(encoding="utf-8"))
+CASOS = [c for f in sorted(Path(__file__).parent.glob("primer_orden*.yaml")) for c in yaml.safe_load(f.read_text(encoding="utf-8"))]
 
 
 def _sol(texto) -> Solucion:
@@ -18,15 +18,18 @@ def _sol(texto) -> Solucion:
     return Solucion(izq, der)
 
 
-def _G(sol: Solucion):
-    """G(x, y) tal que G = constante describe la familia (o la curva)."""
+def _Gs(sol: Solucion) -> list:
+    """Funciones G(x, y) tales que G = constante describe la familia (una por rama al despejar C)."""
     if sol.explicita:
         cs = constantes_de(sol.der)
         if cs:
-            raiz = sp.solve(sp.Eq(ys, sol.der), cs[0])
-            return raiz[0] if len(raiz) == 1 else None
-        return ys - sol.der
-    return sol.izq - sol.der
+            return list(sp.solve(sp.Eq(ys, sol.der), cs[0]))
+        return [ys - sol.der]
+    rel = sol.izq - sol.der
+    cs = constantes_de(rel)
+    if cs:   # la constante puede ir en cualquier parte (p. ej. y + x ln x = C x): se despeja C
+        return list(sp.solve(sp.Eq(sol.izq, sol.der), cs[0]))
+    return [rel]
 
 
 def _cero_local(expr, x0=0.0) -> bool:
@@ -35,7 +38,29 @@ def _cero_local(expr, x0=0.0) -> bool:
     return all(abs(complex(f(x0 + d))) < 1e-9 for d in (-0.2, -0.1, 0.05, 0.1, 0.2))
 
 
-def _equivalentes(ours: Solucion, esperada: Solucion, particular: bool, x0=0.0) -> bool:
+def _num(v):
+    try:
+        return float(v)
+    except TypeError:
+        return None
+
+
+def _en_curva(ours: Solucion, esperada: Solucion, x0: float, y0: float) -> bool:
+    """La relación esperada se anula sobre nuestra curva implícita (cerca del punto inicial)."""
+    Go = ours.izq - ours.der
+    Ge = esperada.izq - esperada.der
+    for dx in (-0.15, -0.05, 0.05, 0.15):
+        xv = x0 + dx
+        try:
+            yv = sp.nsolve(Go.subs(x, xv), ys, y0)
+            if abs(complex(sp.N(Ge.subs({x: xv, ys: yv})))) > 1e-7 * max(1, abs(complex(sp.N(esperada.der.subs({x: xv, ys: yv}))))):
+                return False
+        except Exception:
+            return False
+    return True
+
+
+def _equivalentes(ours: Solucion, esperada: Solucion, particular: bool, x0=0.0, y0=None) -> bool:
     if ours.explicita and esperada.explicita and es_cero(ours.der - esperada.der).ok:
         return True
     if particular and ours.explicita:   # la relación esperada debe anularse sobre nuestra curva
@@ -44,10 +69,9 @@ def _equivalentes(ours: Solucion, esperada: Solucion, particular: bool, x0=0.0) 
     if particular and esperada.explicita:
         e = (ours.izq - ours.der).subs(ys, esperada.der)
         return es_cero(e).ok or _cero_local(e, x0)
-    Go, Ge = _G(ours), _G(esperada)
-    if Go is None or Ge is None:
-        return False
-    return misma_curva(Go, Ge)
+    if particular and y0 is not None and not ours.explicita and not esperada.explicita and _en_curva(ours, esperada, x0, y0):
+        return True
+    return any(misma_curva(go, ge) for go in _Gs(ours) for ge in _Gs(esperada))
 
 
 def _hay_nota(res, clave):
@@ -58,6 +82,13 @@ def _hay_nota(res, clave):
 def test_caso(c):
     ed = leer_ed(c["ed"])
     conds = leer_condiciones(c["condiciones"]) if c.get("condiciones") else None
+    if c.get("no_exacta"):
+        from edo.primer_orden.base import NoAplica
+        from edo.primer_orden.exacta import aplica_exacta
+        assert aplica_exacta(ed) is None
+        with pytest.raises(NoAplica):
+            resolver(ed, "exacta")
+        return
     if c.get("ninguno"):
         r = resolver(ed)
         assert r.metodo == "ninguno" and r.advertencias[0].startswith("No aplica con los métodos del temario")
@@ -69,7 +100,7 @@ def test_caso(c):
         assert _hay_nota(r, c["discrepancia"])
     if "solucion" in c:
         esp = _sol(c["solucion"])
-        assert _equivalentes(r.valor, esp, bool(conds), float(conds[0].x0) if conds else 0.0), f"{r.solucion} no equivale a {c['solucion']}"
+        assert _equivalentes(r.valor, esp, bool(conds), float(conds[0].x0) if conds else 0.0, _num(conds[0].valor) if conds else None), f"{r.solucion} no equivale a {c['solucion']}"
         if conds:
             for cd in conds:
                 v = esp.der.subs(x, cd.x0) if esp.explicita else None

@@ -1,0 +1,75 @@
+# Zill-Wright 8.ª ed., capítulo 2: ejercicios de número impar con la respuesta del apéndice (RES-1 a RES-2).
+# Dentro del programa la variable independiente es x y la incógnita y (en el libro puede ser t, r, P, S, ...).
+# Las constantes se escriben C (el libro usa c).
+
+# ---- 2.2 Variables separables (p. 50)
+- {id: zill-2.2-1, ed: "y' = sen(5x)", metodo: separable, solucion: "y = -cos(5x)/5 + C", ref: "Zill 2.2 #1"}
+- {id: zill-2.2-3, ed: "dx + e^(3x) dy = 0", metodo: separable, solucion: "y = e^(-3x)/3 + C", ref: "Zill 2.2 #3"}
+- {id: zill-2.2-5, ed: "x y' = 4y", metodo: separable, solucion: "y = C x^4", ref: "Zill 2.2 #5"}
+- {id: zill-2.2-7, ed: "y' = e^(3x+2y)", metodo: separable, solucion: "-3 e^(-2y) = 2 e^(3x) + C", ref: "Zill 2.2 #7"}
+- {id: zill-2.2-9, ed: "y ln(x) dx - ((y+1)/x)^2 dy = 0", metodo: separable, solucion: "x^3 ln(x)/3 - x^3/9 = y^2/2 + 2y + ln(y) + C", ref: "Zill 2.2 #9"}
+- {id: zill-2.2-11, ed: "csc(y) dx + sec(x)^2 dy = 0", metodo: separable, solucion: "4 cos(y) = 2x + sen(2x) + C", ref: "Zill 2.2 #11"}
+- {id: zill-2.2-13, ed: "(e^y+1)^2 e^(-y) dx + (e^x+1)^3 e^(-x) dy = 0", metodo: separable, solucion: "(e^x+1)^(-2) + 2 (e^y+1)^(-1) = C", ref: "Zill 2.2 #13"}
+- {id: zill-2.2-15, ed: "y' = k y", metodo: separable, solucion: "y = C e^(k x)", ref: "Zill 2.2 #15 (dS/dr = kS)"}
+- {id: zill-2.2-17, ed: "y' = y - y^2", metodo: separable, solucion: "y = C e^x/(1 + C e^x)", ref: "Zill 2.2 #17 (dP/dt = P − P²)"}
+- {id: zill-2.2-19, ed: "y' = (x y + 3x - y - 3)/(x y - 2x + 4y - 8)", metodo: separable, solucion: "ln((y+3)^5 e^x) - ln((x+4)^5 e^y) = C", ref: "Zill 2.2 #19"}
+- {id: zill-2.2-21, ed: "y' = x sqrt(1 - y^2)", metodo: separable, solucion: "y = sen(x^2/2 + C)", ref: "Zill 2.2 #21"}
+- {id: zill-2.2-23, ed: "y' = 4(y^2 + 1)", metodo: separable, condiciones: "y(pi/4)=1", solucion: "y = tg(4x - 3 pi/4)", ref: "Zill 2.2 #23 (dx/dt = 4(x²+1))"}
+- {id: zill-2.2-25, ed: "x^2 y' = y - x y", metodo: separable, condiciones: "y(-1)=-1", solucion: "y = e^(-(1+1/x))/x", ref: "Zill 2.2 #25"}
+- {id: zill-2.2-27, ed: "sqrt(1-y^2) dx - sqrt(1-x^2) dy = 0", metodo: separable, condiciones: "y(0)=sqrt(3)/2", solucion: "y = x/2 + sqrt(3)/2 sqrt(1 - x^2)", ref: "Zill 2.2 #27"}
+- {id: zill-2.2-31, ed: "y' = (2x+1)/(2y)", metodo: separable, condiciones: "y(-2)=-1", solucion: "y = -sqrt(x^2 + x - 1)", ref: "Zill 2.2 #31"}
+- {id: zill-2.2-33, ed: "e^x dx - e^(-y) dy = 0", metodo: separable, condiciones: "y(0)=0", solucion: "y = -ln(2 - e^x)", ref: "Zill 2.2 #33"}
+
+# ---- 2.3 Ecuaciones lineales (p. 59-60)
+- {id: zill-2.3-1, ed: "y' = 5y", metodo: lineal_y, solucion: "y = C e^(5x)", ref: "Zill 2.3 #1"}
+- {id: zill-2.3-3, ed: "y' + y = e^(3x)", metodo: lineal_y, solucion: "y = e^(3x)/4 + C e^(-x)", ref: "Zill 2.3 #3"}
+- {id: zill-2.3-5, ed: "y' + 3x^2 y = x^2", metodo: lineal_y, solucion: "y = 1/3 + C e^(-x^3)", ref: "Zill 2.3 #5"}
+- {id: zill-2.3-7, ed: "x^2 y' + x y = 1", metodo: lineal_y, solucion: "y = ln(x)/x + C/x", ref: "Zill 2.3 #7"}
+- {id: zill-2.3-9, ed: "x y' - y = x^2 sen(x)", metodo: lineal_y, solucion: "y = C x - x cos(x)", ref: "Zill 2.3 #9"}
+- {id: zill-2.3-11, ed: "x y' + 4y = x^3 - x", metodo: lineal_y, solucion: "y = x^3/7 - x/5 + C x^(-4)", ref: "Zill 2.3 #11"}
+- {id: zill-2.3-13, ed: "x^2 y' + x (x+2) y = e^x", metodo: lineal_y, solucion: "y = e^x/(2 x^2) + C x^(-2) e^(-x)", ref: "Zill 2.3 #13"}
+- {id: zill-2.3-15, ed: "y dx - 4(x + y^6) dy = 0", metodo: lineal_x, solucion: "x = 2 y^6 + C y^4", ref: "Zill 2.3 #15 (lineal en x)"}
+- {id: zill-2.3-17, ed: "cos(x) y' + sen(x) y = 1", metodo: lineal_y, solucion: "y = sen(x) + C cos(x)", ref: "Zill 2.3 #17"}
+- {id: zill-2.3-19, ed: "(x+1) y' + (x+2) y = 2x e^(-x)", metodo: lineal_y, solucion: "(x+1) e^x y = x^2 + C", ref: "Zill 2.3 #19"}
+- {id: zill-2.3-21, ed: "y' + sec(x) y = cos(x)", metodo: lineal_y, solucion: "(sec(x) + tg(x)) y = x - cos(x) + C", ref: "Zill 2.3 #21 (dr/dθ + r sec θ = cos θ)"}
+- {id: zill-2.3-23, ed: "x y' + (3x+1) y = e^(-3x)", metodo: lineal_y, solucion: "y = e^(-3x) + C e^(-3x)/x", ref: "Zill 2.3 #23"}
+- {id: zill-2.3-25, ed: "y' = x + 5y", metodo: lineal_y, condiciones: "y(0)=3", solucion: "y = -x/5 - 1/25 + 76 e^(5x)/25", ref: "Zill 2.3 #25"}
+- {id: zill-2.3-27, ed: "x y' + y = e^x", metodo: lineal_y, condiciones: "y(1)=2", solucion: "y = e^x/x + (2 - e)/x", ref: "Zill 2.3 #27"}
+- {id: zill-2.3-29, ed: "L y' + R y = E", metodo: lineal_y, condiciones: "y(0)=i0", solucion: "y = E/R + (i0 - E/R) e^(-R x/L)", ref: "Zill 2.3 #29 (circuito)"}
+- {id: zill-2.3-31, ed: "x y' + y = 4x + 1", metodo: lineal_y, condiciones: "y(1)=8", solucion: "y = 2x + 1 + 5/x", ref: "Zill 2.3 #31"}
+- {id: zill-2.3-33, ed: "(x+1) y' + y = ln(x)", metodo: lineal_y, condiciones: "y(1)=10", solucion: "(x+1) y = x ln(x) - x + 21", ref: "Zill 2.3 #33"}
+- {id: zill-2.3-35, ed: "y' - sen(x) y = 2 sen(x)", metodo: lineal_y, condiciones: "y(pi/2)=1", solucion: "y = -2 + 3 e^(-cos(x))", ref: "Zill 2.3 #35"}
+
+# ---- 2.4 Ecuaciones exactas (p. 67)
+- {id: zill-2.4-1, ed: "(2x-1)dx + (3y+7)dy = 0", metodo: exacta, solucion: "x^2 - x + 3y^2/2 + 7y = C", ref: "Zill 2.4 #1"}
+- {id: zill-2.4-3, ed: "(5x+4y)dx + (4x-8y^3)dy = 0", metodo: exacta, solucion: "5x^2/2 + 4xy - 2y^4 = C", ref: "Zill 2.4 #3"}
+- {id: zill-2.4-5, ed: "(2xy^2-3)dx + (2x^2y+4)dy = 0", metodo: exacta, solucion: "x^2 y^2 - 3x + 4y = C", ref: "Zill 2.4 #5"}
+- {id: zill-2.4-7, ed: "(x^2-y^2)dx + (x^2-2xy)dy = 0", no_exacta: true, ref: "Zill 2.4 #7 (no exacta)"}
+- {id: zill-2.4-9, ed: "(x - y^3 + y^2 sen(x))dx - (3xy^2 + 2y cos(x))dy = 0", metodo: exacta, solucion: "x y^3 + y^2 cos(x) - x^2/2 = C", ref: "Zill 2.4 #9"}
+- {id: zill-2.4-11, ed: "(y ln(y) - e^(-xy))dx + (1/y + x ln(y))dy = 0", no_exacta: true, ref: "Zill 2.4 #11 (no exacta)"}
+- {id: zill-2.4-13, ed: "x y' = 2x e^x - y + 6x^2", metodo: exacta, solucion: "x y - 2x e^x + 2 e^x - 2x^3 = C", ref: "Zill 2.4 #13"}
+- {id: zill-2.4-15, ed: "(x^2 y^3 - 1/(1+9x^2))dx + x^3 y^2 dy = 0", metodo: exacta, solucion: "x^3 y^3/3 - atan(3x)/3 = C", ref: "Zill 2.4 #15 (la respuesta del libro es x³y³ − tan⁻¹3x = c, el mismo nivel salvo el factor 3)"}
+- {id: zill-2.4-17, ed: "(tg(x) - sen(x) sen(y))dx + cos(x) cos(y) dy = 0", metodo: exacta, solucion: "-ln(cos(x)) + cos(x) sen(y) = C", ref: "Zill 2.4 #17"}
+- {id: zill-2.4-19, ed: "(4x^3 y - 15x^2 - y)dx + (x^4 + 3y^2 - x)dy = 0", metodo: exacta, solucion: "x^4 y - 5x^3 - x y + y^3 = C", ref: "Zill 2.4 #19 (t → x)"}
+- {id: zill-2.4-21, ed: "(x+y)^2 dx + (2xy + x^2 - 1)dy = 0", metodo: exacta, condiciones: "y(1)=1", solucion: "x^3/3 + x^2 y + x y^2 - y = 4/3", ref: "Zill 2.4 #21"}
+- {id: zill-2.4-23, ed: "(4y + 2x - 5)dx + (6y + 4x - 1)dy = 0", metodo: exacta, condiciones: "y(-1)=2", solucion: "4xy + x^2 - 5x + 3y^2 - y = 8", ref: "Zill 2.4 #23 (t → x)"}
+- {id: zill-2.4-25, ed: "(y^2 cos(x) - 3x^2 y - 2x)dx + (2y sen(x) - x^3 + ln(y))dy = 0", metodo: exacta, condiciones: "y(0)=e", solucion: "y^2 sen(x) - x^3 y - x^2 + y ln(y) - y = 0", ref: "Zill 2.4 #25"}
+- {id: zill-2.4-27, ed: "(y^3 + k x y^4 - 2x)dx + (3xy^2 + 20x^2 y^3)dy = 0", solucion: "x y^3 + 5 x^2 y^4 - x^2 = C", ref: "Zill 2.4 #27 (k = 10)"}
+- {id: zill-2.4-29, ed: "xy(-xy sen(x) + 2y cos(x))dx + xy(2x cos(x))dy = 0", metodo: exacta, solucion: "x^2 y^2 cos(x) = C", ref: "Zill 2.4 #29 (ya multiplicada por μ = xy)"}
+
+# ---- 2.5 Soluciones por sustitución (p. 72)
+- {id: zill-2.5-1, ed: "(x-y)dx + x dy = 0", metodo: homogenea, solucion: "y + x ln(x) = C x", ref: "Zill 2.5 #1"}
+- {id: zill-2.5-3, ed: "x dx + (y-2x)dy = 0", metodo: homogenea, solucion: "(x - y) ln(x - y) - y = C (x - y)", ref: "Zill 2.5 #3"}
+- {id: zill-2.5-5, ed: "(y^2 + y x)dx - x^2 dy = 0", metodo: homogenea, solucion: "x + y ln(x) = C y", ref: "Zill 2.5 #5"}
+- {id: zill-2.5-7, ed: "y' = (y - x)/(y + x)", metodo: homogenea, solucion: "ln(x^2 + y^2) + 2 atan(y/x) = C", ref: "Zill 2.5 #7"}
+- {id: zill-2.5-9, ed: "-y dx + (x + sqrt(x y))dy = 0", metodo: homogenea, solucion: "4x = y (ln(y) - C)^2", ref: "Zill 2.5 #9"}
+- {id: zill-2.5-11, ed: "x y^2 y' = y^3 - x^3", metodo: homogenea, condiciones: "y(1)=2", solucion: "y^3 + 3 x^3 ln(x) = 8 x^3", ref: "Zill 2.5 #11"}
+- {id: zill-2.5-13, ed: "(x + y e^(y/x))dx - x e^(y/x) dy = 0", metodo: homogenea, condiciones: "y(1)=0", solucion: "ln(x) = e^(y/x) - 1", ref: "Zill 2.5 #13"}
+- {id: zill-2.5-15, ed: "x y' + y = y^(-2)", metodo: bernoulli_y, solucion: "y^3 = 1 + C x^(-3)", ref: "Zill 2.5 #15"}
+- {id: zill-2.5-17, ed: "y' = y (x y^3 - 1)", metodo: bernoulli_y, solucion: "y^(-3) = x + 1/3 + C e^(3x)", ref: "Zill 2.5 #17"}
+- {id: zill-2.5-19, ed: "x^2 y' + y^2 = x y", metodo: bernoulli_y, solucion: "e^(x/y) = C x", ref: "Zill 2.5 #19 (t → x)"}
+- {id: zill-2.5-21, ed: "x^2 y' - 2x y = 3 y^4", metodo: bernoulli_y, condiciones: "y(1)=1/2", solucion: "y^(-3) = -9/(5x) + 49/(5 x^6)", ref: "Zill 2.5 #21"}
+- {id: zill-2.5-23, ed: "y' = (x + y + 1)^2", metodo: reducible_lineal, solucion: "y = -x - 1 + tg(x + C)", ref: "Zill 2.5 #23"}
+- {id: zill-2.5-25, ed: "y' = tg(x + y)^2", metodo: reducible_lineal, solucion: "2y - 2x + sen(2(x + y)) = C", ref: "Zill 2.5 #25"}
+- {id: zill-2.5-27, ed: "y' = 2 + sqrt(y - 2x + 3)", metodo: reducible_lineal, solucion: "4(y - 2x + 3) = (x + C)^2", ref: "Zill 2.5 #27"}
+- {id: zill-2.5-29, ed: "y' = cos(x + y)", metodo: reducible_lineal, condiciones: "y(0)=pi/4", solucion: "-cot(x + y) + csc(x + y) = x + sqrt(2) - 1", ref: "Zill 2.5 #29"}

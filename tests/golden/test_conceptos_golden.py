@@ -13,7 +13,7 @@ from edo.core.lector import leer_condiciones, leer_ed, leer_expresion, leer_rela
 from edo.core.lector_general import leer_general
 from edo.core.verificador import es_cero
 
-CASOS = yaml.safe_load((Path(__file__).parent / "conceptos.yaml").read_text(encoding="utf-8"))
+CASOS = [c for f in sorted(Path(__file__).parent.glob("conceptos*.yaml")) for c in yaml.safe_load(f.read_text(encoding="utf-8"))]
 
 
 def _leer(texto):
