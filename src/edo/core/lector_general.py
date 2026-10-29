@@ -12,7 +12,7 @@ import sympy as sp
 from sympy.parsing.sympy_parser import parse_expr
 
 from .lector import (
-    _TRANSF, ErrorLectura, _funciones, _partir_igualdad, desde_latex,
+    _TRANSF, ErrorLectura, _funciones, _partir_igualdad, desde_latex, validar_seguro,
 )
 
 _ORDEN_VARS = "xyzt"
@@ -109,7 +109,9 @@ def leer_general(texto: str, *, latex: bool = False) -> EDGeneral:
         if not s.strip():
             raise ErrorLectura("La expresión está vacía.")
         try:
-            e = parse_expr(_funciones(s), local_dict=dict(local), transformations=_TRANSF)
+            texto_funciones = _funciones(s)
+            validar_seguro(texto_funciones)
+            e = parse_expr(texto_funciones, local_dict=dict(local), transformations=_TRANSF)
         except ErrorLectura:
             raise
         except Exception as exc:

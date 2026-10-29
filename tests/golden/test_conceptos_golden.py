@@ -17,8 +17,12 @@ CASOS = [c for f in sorted(Path(__file__).parent.glob("conceptos*.yaml")) for c 
 
 
 def _leer(texto):
-    ed = leer_ed(texto)
-    return ed if ed.orden > 0 else leer_general(texto)
+    from edo.core.lector import ErrorLectura
+    try:
+        ed = leer_ed(texto)
+        return ed if ed.orden > 0 else leer_general(texto)
+    except ErrorLectura:          # ∂z/∂x, z_xx, dP/dt…: lectura general (como hace la API)
+        return leer_general(texto)
 
 
 def _iguales(a, b) -> bool:

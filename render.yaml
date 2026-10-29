@@ -1,0 +1,19 @@
+# Despliegue en Render (https://render.com): New + → Blueprint → elige este repositorio.
+services:
+  - type: web
+    name: edo-solver
+    runtime: python
+    plan: free              # con "free" el servicio se duerme tras 15 min sin uso y la primera visita tarda ~1 min
+    buildCommand: pip install -e .
+    startCommand: uvicorn edo.api.app:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /salud
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.7
+      - key: EDO_AISLAR       # cada ecuación se resuelve en un proceso aparte con límite de tiempo y memoria
+        value: "1"
+      - key: EDO_TIMEOUT      # segundos por ecuación
+        value: "80"
+      - key: EDO_TRABAJADORES # procesos de cálculo simultáneos (cada uno ocupa ~150-250 MB)
+        value: "1"
+      # NO definas ANTHROPIC_API_KEY en un servicio público: cualquiera podría gastar tu saldo con la función de IA.

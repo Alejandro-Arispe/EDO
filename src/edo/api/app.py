@@ -1,13 +1,19 @@
 """API local. Sin internet ni base de datos."""
 from __future__ import annotations
 
+import functools
+import json
+import os
+import threading
 from pathlib import Path
 
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
+from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
+from . import aislamiento
 from ..calculo.derivadas import derivar
 from ..conceptos.clasificacion import clasificar as clasificar_ed
 from ..conceptos.constantes import clasificar_solucion, determinar_constantes
@@ -25,9 +31,57 @@ from ..calculo.resultado import ErrorCalculo
 from ..core.lector import ED, ErrorLectura, leer_condiciones, leer_ed, leer_expresion, leer_relacion, x, ys
 from ..core.verificador import verificar_explicita, verificar_implicita
 
-WEB = Path(__file__).resolve().parents[3] / "web"
+def _carpeta_web() -> Path:
+    """web/ junto al código (instalación editable) o, si no, en el directorio de trabajo; EDO_WEB la fuerza."""
+    candidatas = [Path(os.environ["EDO_WEB"])] if os.environ.get("EDO_WEB") else []
+    candidatas += [Path(__file__).resolve().parents[3] / "web", Path.cwd() / "web"]
+    return next((c for c in candidatas if (c / "index.html").is_file()), candidatas[-1])
+
+
+WEB = _carpeta_web()
 
 app = FastAPI(title="edo-solver")
+
+
+def empaquetar(res):
+    """Resultado de un endpoint -> mensaje simple que viaja por la tubería del trabajador."""
+    if isinstance(res, JSONResponse):
+        return ("resp", res.status_code, json.loads(res.body))
+    return ("ok", jsonable_encoder(res))
+
+
+def aislado(fn):
+    """Con EDO_AISLAR=1 el endpoint se resuelve en un proceso trabajador con límite de tiempo y memoria."""
+    @functools.wraps(fn)
+    def envoltura(p):
+        if not aislamiento.activo():
+            return fn(p)
+        try:
+            msg = aislamiento.piscina().ejecutar(fn.__name__, type(p).__name__, p.model_dump())
+        except aislamiento.TiempoAgotado:
+            return JSONResponse(status_code=504, content={"error": "La ecuación tardó demasiado en resolverse (límite de tiempo). "
+                                                                     "Prueba con una forma más simple o resuélvela en tu equipo."})
+        except aislamiento.Ocupado:
+            return JSONResponse(status_code=503, content={"error": "El servidor está ocupado resolviendo otras ecuaciones. Inténtalo en unos segundos."})
+        if msg[0] == "ok":
+            return msg[1]
+        if msg[0] == "resp":
+            return JSONResponse(status_code=msg[1], content=msg[2])
+        if msg[1] == "ErrorLectura":
+            raise ErrorLectura(msg[2])
+        raise HTTPException(status_code=500, detail=f"Error interno al resolver ({msg[1]}).")
+    return envoltura
+
+
+@app.on_event("startup")
+def _calentar_trabajador():
+    if aislamiento.activo():
+        threading.Thread(target=aislamiento.piscina().calentar, daemon=True).start()
+
+
+@app.get("/salud")
+def salud():
+    return {"ok": True}
 
 
 class Entrada(BaseModel):
@@ -52,6 +106,7 @@ async def _error_lectura(_, exc: ErrorLectura):
 
 
 @app.post("/leer")
+@aislado
 def leer(p: Entrada):
     return leer_ed(p.entrada, latex=p.latex).to_dict()
 
@@ -76,6 +131,7 @@ def _lectura(ed) -> dict:
 
 
 @app.post("/clasificar")
+@aislado
 def clasificar(p: Entrada):
     ed = _leer_cualquiera(p.entrada, p.latex)
     c = clasificar_ed(ed)
@@ -85,6 +141,7 @@ def clasificar(p: Entrada):
 
 
 @app.post("/resolver")
+@aislado
 def resolver(p: PedidoResolver):
     ed = leer_ed(p.entrada, latex=p.latex)
     conds = leer_condiciones(p.condiciones) if p.condiciones and p.condiciones.strip() else []
@@ -103,6 +160,7 @@ def resolver(p: PedidoResolver):
 
 
 @app.post("/verificar")
+@aislado
 def verificar(p: PedidoVerificar):
     ed = leer_ed(p.ed)
     izq, der = leer_relacion(p.respuesta, latex=p.latex)
@@ -124,6 +182,7 @@ class PedidoConstantes(BaseModel):
 
 
 @app.post("/conceptos/constantes")
+@aislado
 def conceptos_constantes(p: PedidoConstantes):
     ed = leer_ed(p.ed) if p.ed and p.ed.strip() else None
     izq, der = leer_relacion(p.respuesta)
@@ -141,6 +200,7 @@ class PedidoTipo(BaseModel):
 
 
 @app.post("/conceptos/tipo_solucion")
+@aislado
 def conceptos_tipo(p: PedidoTipo):
     izq, der = leer_relacion(p.respuesta)
     gen = leer_relacion(p.general) if p.general and p.general.strip() else None
@@ -167,6 +227,7 @@ def _partir_lista(s: str) -> list[str]:
 
 
 @app.post("/conceptos/dependencia")
+@aislado
 def conceptos_dependencia(p: PedidoLista):
     funcs = [leer_expresion(t) for t in _partir_lista(p.entrada)]
     try:
@@ -176,6 +237,7 @@ def conceptos_dependencia(p: PedidoLista):
 
 
 @app.post("/conceptos/raices")
+@aislado
 def conceptos_raices(p: Entrada):
     return desde_raices(leer_raices(p.entrada)).to_dict()
 
@@ -196,6 +258,7 @@ def _revisar_calculo(entrada: str):
 
 
 @app.post("/calculo/derivar")
+@aislado
 def calculo_derivar(p: PedidoCalculo):
     if (mal := _revisar_calculo(p.entrada)) is not None:
         return mal
@@ -207,6 +270,7 @@ def calculo_derivar(p: PedidoCalculo):
 
 
 @app.post("/calculo/integrar")
+@aislado
 def calculo_integrar(p: Entrada):
     if (mal := _revisar_calculo(p.entrada)) is not None:
         return mal
@@ -226,6 +290,7 @@ class PedidoTramos(BaseModel):
 
 
 @app.post("/tramos")
+@aislado
 def tramos(p: PedidoTramos):
     try:
         r = tramos_mod.resolver_por_tramos([t.model_dump() for t in p.tramos], p.condiciones)
@@ -253,6 +318,7 @@ class PedidoPlantilla(BaseModel):
 
 
 @app.post("/problema/plantilla")
+@aislado
 def problema_plantilla(p: PedidoPlantilla):
     try:
         r = problemas.resolver_plantilla(p.id, p.parametros)
@@ -273,6 +339,7 @@ class PedidoIA(BaseModel):
 
 
 @app.post("/problema/ia/proponer")
+@aislado
 def problema_ia_proponer(p: PedidoIA):
     if not p.confirmo_envio:
         return JSONResponse(status_code=400, content={"error": "Debes confirmar el envío del enunciado a la API antes de usar la IA."})
@@ -292,6 +359,7 @@ class PedidoGrafica(PedidoResolver):
 
 
 @app.post("/grafica")
+@aislado
 def grafica(p: PedidoGrafica):
     ed = leer_ed(p.entrada, latex=p.latex)
     conds = leer_condiciones(p.condiciones) if p.condiciones and p.condiciones.strip() else []

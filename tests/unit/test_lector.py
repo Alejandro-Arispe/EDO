@@ -78,3 +78,24 @@ def test_relacion():
 def test_entradas_malas(malo):
     with pytest.raises(ErrorLectura):
         leer_ed(malo)
+
+
+@pytest.mark.parametrize("malo", [
+    "__import__('os').system('dir')", "x.__class__", "().__class__.__bases__", "eval('1')", "open('f')",
+    "x[0]", "lambda: 1", "exec('1')", "x;y", "sen(x)+__builtins__", "Symbol('x')", "x if 1 else 2", "print(1)",
+    "1" * 20, "x" * 2000,
+])
+def test_entrada_maliciosa_se_rechaza_antes_de_eval(malo):
+    """parse_expr de SymPy usa eval: en un servidor público solo debe pasar matemática."""
+    from edo.core.lector import leer_expresion
+    with pytest.raises(ErrorLectura):
+        leer_expresion(malo)
+    with pytest.raises(ErrorLectura):
+        leer_ed(malo + " = y'")
+
+
+def test_nombres_y_notaciones_legitimas_siguen_funcionando():
+    from edo.core.lector import leer_expresion
+    for ok in ["3/2*P0 + sen(2x)", "C1 e^(2x) + C2 x e^(2x)", "sqrt(x^2+1)/ln(x)", "arcsen(x/2)", "e^(-x) cos(2.5 x)",
+               "x*Integral(sin(t)/t,(t,0,x))", "Tm + qe*ce"]:
+        assert leer_expresion(ok) is not None

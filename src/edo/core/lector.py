@@ -11,6 +11,7 @@ Convenciones de escritura:
 """
 from __future__ import annotations
 
+import keyword
 import re
 from dataclasses import dataclass, field
 
@@ -248,12 +249,45 @@ import string as _string
 _LOCAL.update({f"{c}{d}": sp.Symbol(f"{c}{d}") for c in _string.ascii_letters if c not in "eDY" for d in "0123456789"})
 
 
+_PERMITIDOS = {"sin", "cos", "tan", "cot", "sec", "csc", "asin", "acos", "atan", "acot", "asec", "acsc", "sinh", "cosh",
+               "tanh", "coth", "log", "exp", "sqrt", "Abs", "pi", "E", "I", "oo", "Integral", "DIFX", "DIFY", "QQ"}
+_CARACTERES_OK = re.compile(r"^[A-Za-z0-9_ +\-*/^().,]*$")
+_NOMBRE_OK = re.compile(r"^(?:[A-Za-z]{1,3}\d{0,3}|Yd\d+|Zd\d+)$")
+MAX_ENTRADA = 1500
+
+
+def validar_seguro(texto: str) -> None:
+    """``parse_expr`` de SymPy usa eval: antes de llamarlo se acepta solo matemática.
+
+    Se permiten números, operadores, paréntesis, comas, funciones conocidas y nombres cortos de variables
+    (hasta 3 letras con dígitos opcionales: x, y, C1, P0, Tm, qe). Se rechaza todo lo demás (atributos,
+    corchetes, comillas, guiones bajos dobles, palabras reservadas de Python, nombres largos como «eval»).
+    """
+    if len(texto) > MAX_ENTRADA:
+        raise ErrorLectura(f"La expresión es demasiado larga (máximo {MAX_ENTRADA} caracteres).")
+    if not _CARACTERES_OK.match(texto):
+        raro = next(c for c in texto if not re.match(r"[A-Za-z0-9_ +\-*/^().,]", c))
+        raise ErrorLectura(f"Carácter no permitido en la expresión: «{raro}».")
+    if re.search(r"[A-Za-z_)\]]\s*\.|\.\s*[A-Za-z_(]", texto):
+        raise ErrorLectura("No se permite el punto entre nombres (solo en números decimales, como 2.5).")
+    if re.search(r"\d{13,}", texto):
+        raise ErrorLectura("Número demasiado grande (máximo 12 cifras).")
+    for nombre in re.findall(r"[A-Za-z_][A-Za-z_0-9]*", texto):
+        if nombre in _PERMITIDOS:
+            continue
+        if keyword.iskeyword(nombre) or "__" in nombre or not _NOMBRE_OK.match(nombre):
+            raise ErrorLectura(f"Nombre no permitido en la expresión: «{nombre}». "
+                               "Usa x, y, constantes de hasta 3 letras o las funciones sen, cos, tg, ln, sqrt, e^( ).")
+
+
 def _parsear(s: str) -> sp.Expr:
     s = s.strip()
     if not s:
         raise ErrorLectura("La expresión está vacía.")
     try:
-        return parse_expr(_normalizar(s), local_dict=dict(_LOCAL), transformations=_TRANSF, evaluate=True)
+        norm = _normalizar(s)
+        validar_seguro(norm)
+        return parse_expr(norm, local_dict=dict(_LOCAL), transformations=_TRANSF, evaluate=True)
     except ErrorLectura:
         raise
     except Exception as exc:  # SyntaxError, TypeError, etc.
