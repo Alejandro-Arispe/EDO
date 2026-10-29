@@ -42,6 +42,7 @@ class Resultado:
     adicionales: list[dict] = field(default_factory=list)  # [{"tipo": "singular"|"perdida", "latex": ...}]
     extra: list = field(default_factory=list)  # objetos de las adicionales (no se serializan)
     particular: object = None  # y_p como objeto SymPy (no se serializa)
+    respuestas: list[dict] = field(default_factory=list)  # problemas escritos: [{"etiqueta", "latex", "aprox"}]
 
     def to_dict(self) -> dict:
         d = asdict(self)

@@ -14,6 +14,8 @@ from ..conceptos.constantes import clasificar_solucion, determinar_constantes
 from ..conceptos.desde_raices import desde_raices, leer_raices
 from ..conceptos.verificacion import verificar_solucion
 from ..conceptos.wronskiano import analizar_dependencia
+from .. import ia, problemas
+from ..grafica import series as series_grafica
 from ..core.geogebra import comandos as comandos_geogebra
 from ..core.lector_general import leer_general
 from ..primer_orden.base import NoAplica
@@ -194,6 +196,80 @@ def calculo_derivar(p: PedidoCalculo):
 @app.post("/calculo/integrar")
 def calculo_integrar(p: Entrada):
     return integrar(leer_expresion(p.entrada, latex=p.latex), x).to_dict()
+
+
+# ---------------------------------------------------------------- problemas escritos
+@app.get("/problema/plantillas")
+def problema_plantillas():
+    return [{"id": pl.id, "titulo": pl.titulo, "descripcion": pl.descripcion,
+             "parametros": [{"nombre": n, "etiqueta": e, "ejemplo": ej} for n, e, ej in pl.parametros]}
+            for pl in problemas.PLANTILLAS.values()]
+
+
+class PedidoPlantilla(BaseModel):
+    id: str
+    parametros: dict[str, str] = {}
+
+
+@app.post("/problema/plantilla")
+def problema_plantilla(p: PedidoPlantilla):
+    try:
+        r = problemas.resolver_plantilla(p.id, p.parametros)
+    except NoAplica as exc:
+        return JSONResponse(status_code=422, content={"error": str(exc)})
+    return r.to_dict()
+
+
+@app.get("/problema/ia/estado")
+def problema_ia_estado():
+    return {"disponible": ia.disponible(),
+            "aviso": "El enunciado se envía a la API de Anthropic solo si lo confirmas. Sin la variable ANTHROPIC_API_KEY esta función está apagada."}
+
+
+class PedidoIA(BaseModel):
+    enunciado: str
+    confirmo_envio: bool = False
+
+
+@app.post("/problema/ia/proponer")
+def problema_ia_proponer(p: PedidoIA):
+    if not p.confirmo_envio:
+        return JSONResponse(status_code=400, content={"error": "Debes confirmar el envío del enunciado a la API antes de usar la IA."})
+    try:
+        return ia.proponer(p.enunciado)
+    except ia.ErrorIA as exc:
+        return JSONResponse(status_code=503, content={"error": str(exc)})
+
+
+# ------------------------------------------------------------------------ gráfica
+class PedidoGrafica(PedidoResolver):
+    xmin: float = -5.0
+    xmax: float = 5.0
+    ymin: float = -5.0
+    ymax: float = 5.0
+    familia: str | None = None
+
+
+@app.post("/grafica")
+def grafica(p: PedidoGrafica):
+    ed = leer_ed(p.entrada, latex=p.latex)
+    conds = leer_condiciones(p.condiciones) if p.condiciones and p.condiciones.strip() else []
+    if not (p.xmin < p.xmax and p.ymin < p.ymax):
+        return JSONResponse(status_code=422, content={"error": "El rango debe cumplir mín < máx."})
+    try:
+        r = resolver_primer_orden(ed, p.metodo or None, conds)
+    except NoAplica as exc:
+        return JSONResponse(status_code=422, content={"error": str(exc)})
+    if r.valor is None:
+        return JSONResponse(status_code=422, content={"error": "No hay solución que graficar."})
+    fam = None
+    if p.familia and p.familia.strip():
+        try:
+            fam = [float(v) for v in p.familia.replace(";", ",").split(",") if v.strip()][:12]
+        except ValueError:
+            return JSONResponse(status_code=422, content={"error": "La familia debe ser una lista de números, por ejemplo -2, -1, 0, 1, 2."})
+    return {"series": series_grafica(r, p.xmin, p.xmax, p.ymin, p.ymax, fam), "solucion": r.solucion,
+            "rango": {"xmin": p.xmin, "xmax": p.xmax, "ymin": p.ymin, "ymax": p.ymax}}
 
 
 if WEB.is_dir():

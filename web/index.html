@@ -14,6 +14,7 @@
     <button data-tab="ed" class="activa">Ecuación diferencial</button>
     <button data-tab="conceptos">Conceptos</button>
     <button data-tab="calculo">Derivadas e integrales</button>
+    <button data-tab="problemas">Problemas</button>
     <button data-tab="historial">Historial</button>
   </nav>
 
@@ -54,8 +55,18 @@
     <div id="cabecera-impresion" class="solo-impresion"></div>
     <div id="herramientas" class="fila" hidden>
       <button id="btn-gg" type="button" title="Copia los comandos para graficar la solución en GeoGebra">Copiar a GeoGebra</button>
+      <button id="btn-graficar" type="button" title="Dibuja la solución (y la familia de curvas)">Graficar</button>
       <button id="btn-pdf" type="button" title="Abre el diálogo de impresión: elige «Guardar como PDF»">Exportar a PDF</button>
       <span id="msg-herramientas" class="regla"></span>
+    </div>
+    <div id="zona-grafica" class="paso" hidden>
+      <div class="fila rango">
+        <label>x mín <input id="g-xmin" value="-5"></label><label>x máx <input id="g-xmax" value="5"></label>
+        <label>y mín <input id="g-ymin" value="-5"></label><label>y máx <input id="g-ymax" value="5"></label>
+        <label>Valores de C (familia) <input id="g-familia" placeholder="-2, -1, 0, 1, 2"></label>
+      </div>
+      <canvas id="canvas-grafica" style="width:100%;height:340px"></canvas>
+      <div id="g-leyenda"></div><div id="g-msg" class="regla"></div>
     </div>
     <div id="salida-ed"></div>
     <fieldset class="revisar">
@@ -64,6 +75,24 @@
       <div class="fila"><button id="btn-verificar">Verificar mi respuesta</button></div>
       <div id="salida-revisar"></div>
     </fieldset>
+  </section>
+
+  <section id="tab-problemas" hidden>
+    <h2 class="sub">Plantillas (sin internet)</h2>
+    <label>Tipo de problema</label>
+    <select id="p-plantilla"></select>
+    <div id="p-desc" class="regla"></div>
+    <div id="p-campos" class="rejilla"></div>
+    <div class="fila"><button id="btn-plantilla" class="primario">Resolver problema</button></div>
+    <div id="salida-problema"></div>
+    <h2 class="sub">Enunciado libre con IA (opcional)</h2>
+    <div id="ia-estado" class="regla"></div>
+    <div id="ia-form" hidden>
+      <textarea id="ia-enunciado" rows="5" placeholder="Escribe el problema con tus palabras…"></textarea>
+      <label><input id="ia-confirmo" type="checkbox" style="width:auto"> Confirmo que este texto se envía a la API de Anthropic (internet). La IA solo propone la ecuación: tú la revisas y el programa la resuelve.</label>
+      <div class="fila"><button id="btn-ia">Proponer ecuación</button></div>
+      <div id="salida-ia"></div>
+    </div>
   </section>
 
   <section id="tab-historial" hidden>

@@ -243,6 +243,9 @@ QQ = sp.Symbol("QQ")  # «?»: M o N desconocido (hallar para que sea exacta)
 _LOCAL = {"QQ": QQ, "x": x, "y": ys, "e": sp.E, "D": D, "DIFX": _DIFX, "DIFY": _DIFY, "pi": sp.pi,
           **{f"Yd{k}": v for k, v in _YD.items()},
           "C": sp.Symbol("C"), **{f"C{k}": sp.Symbol(f"C{k}") for k in range(1, 13)}}
+# parámetros con subíndice numérico (P0, T1, v0, ...) son un solo símbolo, no un producto
+import string as _string
+_LOCAL.update({f"{c}{d}": sp.Symbol(f"{c}{d}") for c in _string.ascii_letters if c not in "eDY" for d in "0123456789"})
 
 
 def _parsear(s: str) -> sp.Expr:
