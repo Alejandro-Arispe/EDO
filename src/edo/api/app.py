@@ -14,6 +14,7 @@ from ..conceptos.constantes import clasificar_solucion, determinar_constantes
 from ..conceptos.desde_raices import desde_raices, leer_raices
 from ..conceptos.verificacion import verificar_solucion
 from ..conceptos.wronskiano import analizar_dependencia
+from ..core.geogebra import comandos as comandos_geogebra
 from ..core.lector_general import leer_general
 from ..primer_orden.base import NoAplica
 from ..resolutor import clasificar_metodos, resolver as resolver_primer_orden
@@ -92,6 +93,10 @@ def resolver(p: PedidoResolver):
     d = r.to_dict()
     d["lectura"] = ed.to_dict()
     d["condiciones"] = [c.to_dict() for c in conds]
+    try:
+        d["geogebra"] = comandos_geogebra(r.valor, r.extra) if r.valor is not None else []
+    except Exception:
+        d["geogebra"] = []
     return d
 
 
@@ -100,8 +105,14 @@ def verificar(p: PedidoVerificar):
     ed = leer_ed(p.ed)
     izq, der = leer_relacion(p.respuesta, latex=p.latex)
     r = verificar_solucion(ed, izq, der)
-    return {"lectura": ed.to_dict(), "verificacion": r.verificacion.to_dict(), "pasos": [s.to_dict() for s in r.pasos],
-            "solucion": r.solucion}
+    out = {"lectura": ed.to_dict(), "verificacion": r.verificacion.to_dict(), "pasos": [s.to_dict() for s in r.pasos],
+           "solucion": r.solucion}
+    if r.verificacion.ok:
+        try:
+            out["tipo"] = clasificar_solucion(ed, izq, der).pasos[-1].explicacion
+        except Exception:
+            pass
+    return out
 
 
 class PedidoConstantes(BaseModel):

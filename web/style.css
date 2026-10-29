@@ -21,3 +21,17 @@ button.primario{background:var(--ac);color:#fff;border-color:var(--ac)}
 .ok{color:var(--ok);font-weight:600}.mal{color:var(--mal);font-weight:600}
 .aviso{margin:8px 0;padding:6px 10px;background:var(--aviso);border-radius:6px;font-size:.9rem}
 .katex-display{overflow-x:auto;overflow-y:hidden;padding:2px 0}
+
+.revisar{margin:18px 0;padding:6px 14px 10px;border:1px solid var(--bd);border-radius:10px}
+.revisar legend{padding:0 6px;font-size:.85rem;color:var(--mut)}
+.solo-impresion{display:none}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.9rem}
+@media print{
+  :root{--bg:#fff;--fg:#000;--mut:#444;--bd:#bbb;--card:#fff;--ok:#0a6b3a;--mal:#a11;--aviso:#fff4d6}
+  body{background:#fff;color:#000;font-size:11pt}
+  header,nav,.fila,input,select,button,math-field,#lectura,.revisar,#tab-conceptos,#tab-calculo,#tab-historial,label{display:none!important}
+  .solo-impresion{display:block!important;margin:0 0 10px}
+  .paso{break-inside:avoid;border:1px solid #bbb}
+  main{max-width:none;padding:0}
+  @page{margin:16mm}
+}

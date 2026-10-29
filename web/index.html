@@ -14,6 +14,7 @@
     <button data-tab="ed" class="activa">Ecuación diferencial</button>
     <button data-tab="conceptos">Conceptos</button>
     <button data-tab="calculo">Derivadas e integrales</button>
+    <button data-tab="historial">Historial</button>
   </nav>
 
   <section id="tab-conceptos" hidden>
@@ -50,10 +51,24 @@
       <button id="btn-clasificar">Clasificar</button>
       <button id="btn-resolver" class="primario">Resolver</button>
     </div>
-    <label>Revisar mi respuesta</label>
-    <input id="respuesta" type="text" placeholder="y=3x-x^2   ·   x/y^2+1/y^3=C" autocomplete="off">
-    <div class="fila"><button id="btn-verificar">Verificar</button></div>
+    <div id="cabecera-impresion" class="solo-impresion"></div>
+    <div id="herramientas" class="fila" hidden>
+      <button id="btn-gg" type="button" title="Copia los comandos para graficar la solución en GeoGebra">Copiar a GeoGebra</button>
+      <button id="btn-pdf" type="button" title="Abre el diálogo de impresión: elige «Guardar como PDF»">Exportar a PDF</button>
+      <span id="msg-herramientas" class="regla"></span>
+    </div>
     <div id="salida-ed"></div>
+    <fieldset class="revisar">
+      <legend>Revisar mi respuesta</legend>
+      <input id="respuesta" type="text" placeholder="y=3x-x^2   ·   x/y^2+1/y^3=C   ·   y=C1 cos x+C2 sen x" autocomplete="off">
+      <div class="fila"><button id="btn-verificar">Verificar mi respuesta</button></div>
+      <div id="salida-revisar"></div>
+    </fieldset>
+  </section>
+
+  <section id="tab-historial" hidden>
+    <div class="fila"><span class="regla" style="flex:1">Se guarda solo en este navegador (no sale de tu computadora).</span><button id="btn-vaciar">Vaciar historial</button></div>
+    <div id="lista-historial"></div>
   </section>
 
   <section id="tab-calculo" hidden>
