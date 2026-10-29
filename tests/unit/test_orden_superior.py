@@ -101,3 +101,23 @@ def test_variacion_orden_n_y_coeficiente_principal():
     r = resolver(leer_ed("2y''' - 2y'' - 4y' + 4y = e^x / (1 + e^x)"), "variacion_parametros")
     assert r.verificacion.ok and len(r.constantes) == 3
     assert any(p.titulo.startswith("Dejar el coeficiente principal") for p in r.pasos)
+
+
+def test_euler_clasificador_y_api():
+    ids = [m["metodo"] for m in clasificar_metodos(leer_ed("x^2 y'' - x y' + y = 0"))]
+    assert ids == ["euler"]
+    assert clasificar_metodos(leer_ed("y'' + x y = 0")) == []
+    r = c.post("/resolver", json={"entrada": "(2x+1)^2 y'' - 3(2x+1) y' + 2y = 4(2x+1)^3"}).json()
+    assert r["verificacion"]["ok"] and any(p["discrepancia"] and "A12" in p["discrepancia"] for p in r["pasos"])
+    assert "4 D^{2} - 10 D + 2" in " ".join(p["despues_latex"] for p in r["pasos"])
+
+
+@_s
+@given(st.integers(-2, 2), st.integers(-2, 2), st.integers(1, 3))
+def test_propiedad_euler_homogenea(r1, r2, a):
+    """Raíces r1, r2 en t -> y = x^r1, x^r2 resuelven x^2y'' + (1-r1-r2)xy' + r1 r2 y = 0 (Euler, a=1)."""
+    ed = leer_ed(f"x^2 y'' + ({1 - r1 - r2}) x y' + ({r1 * r2}) y = 0")
+    res = resolver(ed)
+    assert res.verificacion.ok and len(res.constantes) == 2
+    for r in {r1, r2}:
+        assert es_cero(ed.expr.subs(y(x), x ** r).doit()).ok

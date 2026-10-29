@@ -1,0 +1,11 @@
+# Coeficiente variable: Euler (x = e^t) y Cauchy-Legendre (ax+b = e^t).
+# solucion: general esperada con las mismas constantes C1, C2...; yp: solución particular esperada.
+- {id: III-eval-2, ed: "4x^2 y'' + 17y = 0", solucion: "sqrt(x)(C1 cos(2 ln(x)) + C2 sen(2 ln(x)))", constantes: 2, ref: "III Evaluación p.7 ej.2"}
+- {id: A12, ed: "(2x+1)^2 y'' - 3(2x+1) y' + 2y = 4(2x+1)^3", yp: "(2x+1)^3/2", constantes: 2, raices_t: "(5+sqrt(17))/4, (5-sqrt(17))/4", discrepancia: A12, ref: "DISCREPANCIAS A12"}
+- {id: t6-euler-1, ed: "x^2 y'' - x y' + y = 0", solucion: "x (C1 + C2 ln(x))", constantes: 2, ref: "Euler, raíz doble"}
+- {id: t6-euler-2, ed: "x^2 y'' - 2y = x^3", yp: "x^3/4", constantes: 2, ref: "Euler no homogénea"}
+- {id: t6-euler-3, ed: "x^2 y'' + x y' + y = ln(x)", yp: "ln(x)", constantes: 2, ref: "Euler, Q con ln x"}
+- {id: t6-euler-orden3, ed: "x^3 y''' + x^2 y'' - 2x y' + 2y = 0", constantes: 3, ref: "Euler de orden 3"}
+- {id: t6-euler-cond, ed: "x^2 y'' + x y' - y = 1/x", condiciones: "y(1)=0, y'(1)=1", ref: "con condiciones (se verifica por sustitución)"}
+- {id: t6-cl-1, ed: "(x+1)^2 y'' - (x+1) y' + y = x + 1", yp: "(x+1) ln(x+1)^2/2", constantes: 2, ref: "Cauchy-Legendre"}
+- {id: t6-no-euler, ed: "y'' + x y = 0", ninguno: true, ref: "coeficiente variable que no es de Euler"}

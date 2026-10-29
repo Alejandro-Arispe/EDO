@@ -4,15 +4,16 @@ from __future__ import annotations
 from ..core.lector import ED
 from ..core.paso import Resultado
 from ..primer_orden.base import NoAplica
-from . import lineal_cc, variacion
+from . import euler, lineal_cc, variacion
 
 METODOS = {
     "abreviado": ("Método abreviado (operador D)", lineal_cc.aplica_abreviado, lineal_cc.resolver_abreviado),
     "coeficientes_indeterminados": ("Coeficientes indeterminados", lineal_cc.aplica_coef_indeterminados,
                                     lineal_cc.resolver_coef_indeterminados),
     "variacion_parametros": ("Variación de parámetros", variacion.aplica_variacion, variacion.resolver_variacion),
+    "euler": ("Euler / Cauchy-Legendre (ax+b = eᵗ)", euler.aplica_euler, euler.resolver_euler),
 }
-PREFERENCIA = ["abreviado", "coeficientes_indeterminados", "variacion_parametros"]
+PREFERENCIA = ["abreviado", "coeficientes_indeterminados", "variacion_parametros", "euler"]
 
 
 def clasificar_metodos(ed: ED) -> list[dict]:
@@ -47,8 +48,7 @@ def _ninguno(ed: ED) -> Resultado:
     res = Resultado("ninguno")
     res.advertencias.append(
         "No aplica con los métodos del temario implementados hasta ahora (método abreviado, coeficientes indeterminados "
-        "y variación de parámetros para coeficientes constantes). Si los coeficientes son variables (Euler, Cauchy-Legendre) "
-        "falta la fase de coeficiente variable.")
+        "variación de parámetros para coeficientes constantes, Euler y Cauchy-Legendre).")
     try:
         lineal_cc.leer_lineal(ed)
     except NoAplica as exc:
