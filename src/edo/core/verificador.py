@@ -75,6 +75,10 @@ def es_cero(expr: sp.Expr, simbolos: list[sp.Symbol] | None = None, *, semilla: 
         ok, det = _numerico(expr, [], random.Random(semilla), puntos=1)
         return Verificacion(ok, "numérica", det)
     ok, det = _numerico(expr, simbolos, random.Random(semilla), ramas=ramas)
+    if not ok:  # soluciones que solo existen para x < 0 (p. ej. singulares x^(2/3) + y^(2/3) = 1)
+        ok2, det2 = _numerico(expr, simbolos, random.Random(semilla), dominio=(-2.5, -0.3), ramas=ramas)
+        if ok2:
+            return Verificacion(True, "numérica (5 puntos, x < 0)", det2)
     return Verificacion(ok, "numérica (5 puntos)", det)
 
 

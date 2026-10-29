@@ -85,6 +85,13 @@
     <div id="p-campos" class="rejilla"></div>
     <div class="fila"><button id="btn-plantilla" class="primario">Resolver problema</button></div>
     <div id="salida-problema"></div>
+    <h2 class="sub">Ecuación con coeficiente por tramos</h2>
+    <div class="regla">Una línea por tramo: <code>ecuación ; desde ; hasta</code> (usa <code>oo</code> para infinito). Se resuelve cada tramo y se empalma por continuidad desde el punto de la condición.</div>
+    <textarea id="t-tramos" rows="3" placeholder="y' - 2/x*y = 4x ; 0 ; 2&#10;y' + 2y = 4x ; 2 ; oo"></textarea>
+    <label>Condición inicial</label>
+    <input id="t-cond" type="text" placeholder="y(1)=4" autocomplete="off">
+    <div class="fila"><button id="btn-tramos" class="primario">Resolver por tramos</button></div>
+    <div id="salida-tramos"></div>
     <h2 class="sub">Enunciado libre con IA (opcional)</h2>
     <div id="ia-estado" class="regla"></div>
     <div id="ia-form" hidden>

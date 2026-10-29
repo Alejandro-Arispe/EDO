@@ -14,7 +14,7 @@ from ..conceptos.constantes import clasificar_solucion, determinar_constantes
 from ..conceptos.desde_raices import desde_raices, leer_raices
 from ..conceptos.verificacion import verificar_solucion
 from ..conceptos.wronskiano import analizar_dependencia
-from .. import ia, problemas
+from .. import ia, problemas, tramos as tramos_mod
 from ..grafica import series as series_grafica
 from ..core.geogebra import comandos as comandos_geogebra
 from ..core.lector_general import leer_general
@@ -196,6 +196,32 @@ def calculo_derivar(p: PedidoCalculo):
 @app.post("/calculo/integrar")
 def calculo_integrar(p: Entrada):
     return integrar(leer_expresion(p.entrada, latex=p.latex), x).to_dict()
+
+
+# ------------------------------------------------------------- ecuaciones por tramos
+class Tramo(BaseModel):
+    ed: str
+    desde: str
+    hasta: str
+
+
+class PedidoTramos(BaseModel):
+    tramos: list[Tramo]
+    condiciones: str
+
+
+@app.post("/tramos")
+def tramos(p: PedidoTramos):
+    try:
+        r = tramos_mod.resolver_por_tramos([t.model_dump() for t in p.tramos], p.condiciones)
+    except NoAplica as exc:
+        return JSONResponse(status_code=422, content={"error": str(exc)})
+    d = r.to_dict()
+    try:
+        d["geogebra"] = []
+    except Exception:
+        pass
+    return d
 
 
 # ---------------------------------------------------------------- problemas escritos

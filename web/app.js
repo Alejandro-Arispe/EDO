@@ -337,6 +337,21 @@ async function proponerIA() {
     b.addEventListener("click", () => { mostrarTab("ed"); if (usarML) $("toggle-ml").click(); $("entrada").value = e1.value; $("condiciones").value = e2.value; leerEnVivo(); });
   } catch (e) { error(destino, e); }
 }
+async function resolverTramos() {
+  const destino = $("salida-tramos"); destino.innerHTML = "";
+  const tramos = $("t-tramos").value.split("\n").map((l) => l.trim()).filter(Boolean).map((l) => {
+    const [ed, desde, hasta] = l.split(";").map((s) => (s || "").trim());
+    return { ed, desde, hasta };
+  });
+  try {
+    const d = await api("/tramos", { tramos, condiciones: $("t-cond").value });
+    if (d.solucion) { const s = crear("div", "paso respuesta", destino); crear("h3", "", s).textContent = "Solución por tramos"; mate(s, d.solucion); }
+    pintarPasos(d.pasos, destino);
+    if (d.verificacion) pintarVerificacion(d.verificacion, destino);
+    (d.advertencias || []).forEach((a) => { texto(crear("div", "aviso", destino), a); });
+  } catch (e) { error(destino, e); }
+}
+$("btn-tramos").addEventListener("click", resolverTramos);
 $("p-plantilla").addEventListener("change", pintarCamposPlantilla);
 $("btn-plantilla").addEventListener("click", resolverPlantilla);
 $("btn-ia").addEventListener("click", proponerIA);

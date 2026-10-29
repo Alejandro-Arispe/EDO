@@ -163,7 +163,56 @@ def resolver_lagrange(ed: ED, condiciones=None) -> Resultado:
         pass
     if res.adicionales:
         res.advertencias.append("Al dividir entre p − φ(p) se pierden soluciones con p constante (recta o constante); aparecen en «soluciones adicionales».")
+    _singular_por_discriminante(res, ed, F)
     return _cerrar_param(res, ed, sol, condiciones)
+
+
+def _pulir(ye: sp.Expr) -> sp.Expr:
+    """Simplifica una rama que solo existe para x < 0 (x = −u con u > 0): ±(1 − (−x)^(2/3))^(3/2)."""
+    u = sp.Symbol("u", positive=True)
+    try:
+        e = sp.simplify(ye.subs(x, -u))
+        e = e.subs(u, -x)
+        return e if sp.count_ops(e) <= sp.count_ops(ye) else ye
+    except Exception:
+        return ye
+
+
+def _despejar_p_real(xs_: sp.Expr) -> list:
+    """Raíces reales p(x) de x = xs_(p); prueba x<0 y x>0 para que las raíces fraccionarias salgan reales."""
+    for signo in ({"negative": True}, {"positive": True}):
+        xx = sp.Symbol("xx", real=True, **signo)
+        try:
+            raices = [r for r in sp.solve(sp.Eq(xx, xs_.subs(x, xx)), p) if not r.has(sp.I, sp.LambertW)]
+        except Exception:
+            raices = []
+        if raices:
+            return [sp.simplify(r.subs(xx, x)) for r in raices]
+    return []
+
+
+def _singular_por_discriminante(res: Resultado, ed: ED, F: sp.Expr):
+    """Solución singular = envolvente: curva con F = 0 y ∂F/∂p = 0 que además cumple la ED."""
+    try:
+        cands = sp.solve([F, sp.diff(F, p)], [ys, p], dict=True)
+    except Exception:
+        cands = []
+    halladas = []
+    for c in cands:
+        f = c.get(ys)
+        if f is None or f.has(p) or f.has(sp.I):
+            continue
+        if verificar_explicita(ed, f).ok:
+            halladas.append(f)
+    for f in halladas:
+        s = Solucion(ys, f)
+        res.adicionales.append({"tipo": "singular", "latex": s.latex()})
+        res.extra.append(s)
+    res.pasos.append(Paso(
+        "Buscar solución singular (discriminante en p)", "F = 0 y ∂F/∂p = 0", rf"F = {latex(F)} = 0,\quad rac{{\partial F}}{{\partial p}} = {latex(sp.diff(F, p))} = 0",
+        "", ("Las curvas halladas cumplen la ecuación diferencial: " + ", ".join(f"$y={latex(f)}$" for f in halladas) + "." if halladas else
+            "Se elimina p entre F = 0 y ∂F/∂p = 0 y se prueba la curva en la ecuación diferencial: no la cumple, "
+            "por lo tanto no hay solución singular.")))
 
 
 def resolver_clairaut(ed: ED, condiciones=None) -> Resultado:
@@ -193,9 +242,9 @@ def resolver_clairaut(ed: ED, condiciones=None) -> Resultado:
     adic = {"tipo": "singular", "latex": sing.latex()}
     extra = sing
     try:
-        ps = [r for r in sp.solve(sp.Eq(x, xs_), p) if not r.has(sp.I, sp.LambertW)]
+        ps = _despejar_p_real(xs_)
         if len(ps) == 1:
-            ye = simplificar(sp.expand(x * ps[0] + psi.subs(p, ps[0])))
+            ye = _pulir(simplificar(sp.expand(x * ps[0] + psi.subs(p, ps[0]))))
             if not ye.has(p) and verificar_explicita(ed, ye).ok:
                 extra = Solucion(ys, ye)
                 adic = {"tipo": "singular", "latex": extra.latex() + r"\ \ \left(\text{o en forma paramétrica: }" + sing.latex() + r"\right)"}
@@ -203,7 +252,7 @@ def resolver_clairaut(ed: ED, condiciones=None) -> Resultado:
         elif len(ps) > 1:
             ramas = []
             for r in ps:
-                ye = simplificar(sp.expand(x * r + psi.subs(p, r)))
+                ye = _pulir(simplificar(sp.expand(x * r + psi.subs(p, r))))
                 if not ye.has(p) and verificar_explicita(ed, ye).ok:
                     ramas.append(ye)
             if ramas:
