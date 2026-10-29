@@ -8,7 +8,7 @@
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<header><h1>edo-solver</h1><p>Ecuaciones diferenciales paso a paso · método del M.Sc. Ing. Eudal Avendaño Gonzales</p></header>
+<header><button id="btn-teclado" type="button" class="boton-teclado" aria-pressed="false" title="Teclado con raíz, exponentes, fracciones, sen, cos, ln…">⌨ Teclado</button><h1>edo-solver</h1><p>Ecuaciones diferenciales paso a paso · método del M.Sc. Ing. Eudal Avendaño Gonzales</p></header>
 <main>
   <nav id="tabs">
     <button data-tab="ed" class="activa">Ecuación diferencial</button>
@@ -110,6 +110,10 @@
     <div id="salida-calculo"></div>
   </section>
 </main>
+<div id="teclado" class="teclado" role="group" aria-label="Teclado matemático">
+  <div class="teclado-cab"><span>Teclado: toca una tecla para escribirla en el campo activo (con texto seleccionado, lo envuelve: √(selección))</span><button id="cerrar-teclado" type="button" class="tecla" title="Cerrar">✕</button></div>
+  <div id="teclas" class="teclas"></div>
+</div>
 <script src="vendor/katex/katex.min.js"></script>
 <script src="vendor/katex/auto-render.min.js"></script>
 <script src="vendor/mathlive/mathlive.min.js"></script>

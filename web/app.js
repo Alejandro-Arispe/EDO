@@ -341,4 +341,73 @@ $("p-plantilla").addEventListener("change", pintarCamposPlantilla);
 $("btn-plantilla").addEventListener("click", resolverPlantilla);
 $("btn-ia").addEventListener("click", proponerIA);
 cargarPlantillas(); estadoIA();
+// ------------------------------------------------------------------- teclado
+// «|» marca dónde queda el cursor después de insertar.
+const TECLAS = [
+  ["Básico", [
+    ["x²", "^2", "exponente 2"], ["xⁿ", "^(|)", "exponente (cualquier expresión)"], ["x^(a/b)", "^(|/)", "exponente fraccionario"],
+    ["a/b", "(|)/()", "fracción"], ["√", "sqrt(|)", "raíz cuadrada"], ["ⁿ√", "(|)^(1/n)", "raíz n-ésima"],
+    ["eˣ", "e^(|)", "exponencial"], ["ln", "ln(|)", "logaritmo natural"], ["|x|", "abs(|)", "valor absoluto"],
+    ["( )", "(|)", "paréntesis"], ["π", "pi", "pi"], ["e", "e", "número e"], ["·", "*", "multiplicar"], ["=", " = ", "igual"],
+  ]],
+  ["Trigonometría", [
+    ["sen", "sen(|)", ""], ["cos", "cos(|)", ""], ["tg", "tg(|)", ""], ["ctg", "ctg(|)", ""], ["sec", "sec(|)", ""], ["csc", "csc(|)", ""],
+    ["arcsen", "arcsen(|)", ""], ["arccos", "arccos(|)", ""], ["arctg", "arctg(|)", ""],
+    ["senh", "senh(|)", ""], ["cosh", "cosh(|)", ""], ["tgh", "tgh(|)", ""], ["sen²", "sen(|)^2", "sen(x)^2"], ["cos²", "cos(|)^2", "cos(x)^2"],
+  ]],
+  ["Ecuaciones diferenciales", [
+    ["y′", "y'", "primera derivada"], ["y″", "y''", "segunda derivada"], ["y‴", "y'''", "tercera derivada"], ["y⁽ⁿ⁾", "y^(|)", "derivada de orden n"],
+    ["dy/dx", "dy/dx", ""], ["d²y/dx²", "d^2y/dx^2", ""], ["dx", " dx", "diferencial dx"], ["dy", " dy", "diferencial dy"],
+    ["D", "D", "operador D"], ["D²", "D^2", "operador D al cuadrado"], ["(D−a)y", "(D-|)y", "operador (D − a) y"],
+    ["y(a)=b", "y(|)=", "condición inicial"], ["y′(a)=b", "y'(|)=", "condición sobre la derivada"], ["C₁", "C1", "constante"], ["?", "?", "M o N desconocido (exacta)"],
+  ]],
+];
+let ultimoCampo = null;
+document.addEventListener("focusin", (e) => { if (e.target.matches("input[type=text], textarea")) ultimoCampo = e.target; });
+
+function insertar(snippet) {
+  const el = ultimoCampo && document.body.contains(ultimoCampo) ? ultimoCampo : ($("tab-ed").hidden ? null : $("entrada"));
+  if (!el || el.offsetParent === null) return;
+  const i = snippet.indexOf("|");
+  const texto = i >= 0 ? snippet.slice(0, i) + snippet.slice(i + 1) : snippet;
+  const a = el.selectionStart ?? el.value.length, b = el.selectionEnd ?? el.value.length;
+  const sel = el.value.slice(a, b);
+  // si hay texto seleccionado y el snippet tiene hueco, lo envuelve: sqrt(selección)
+  const ins = i >= 0 && sel ? snippet.slice(0, i) + sel + snippet.slice(i + 1) : texto;
+  el.value = el.value.slice(0, a) + ins + el.value.slice(b);
+  const pos = i >= 0 ? a + (sel ? i + sel.length : i) : a + ins.length;
+  el.focus(); el.setSelectionRange(pos, pos);
+  el.dispatchEvent(new Event("input", { bubbles: true }));
+}
+function armarTeclado() {
+  const cont = $("teclas"); cont.innerHTML = "";
+  TECLAS.forEach(([grupo, teclas]) => {
+    const g = crear("div", "grupo-teclas", cont);
+    crear("span", "nombre-grupo", g).textContent = grupo;
+    teclas.forEach(([rotulo, snip, ayuda]) => {
+      const b = crear("button", "tecla", g); b.type = "button"; b.textContent = rotulo; b.title = ayuda || snip.replace("|", "▮");
+      b.addEventListener("mousedown", (e) => e.preventDefault());   // no le quita el foco al campo
+      b.addEventListener("click", () => insertar(snip));
+    });
+  });
+  const borrar = crear("button", "tecla", cont); borrar.type = "button"; borrar.textContent = "⌫"; borrar.title = "borrar un carácter";
+  borrar.addEventListener("mousedown", (e) => e.preventDefault());
+  borrar.addEventListener("click", () => {
+    const el = ultimoCampo; if (!el) return;
+    const a = el.selectionStart, b = el.selectionEnd;
+    if (a === b && a > 0) { el.value = el.value.slice(0, a - 1) + el.value.slice(b); el.setSelectionRange(a - 1, a - 1); }
+    else { el.value = el.value.slice(0, a) + el.value.slice(b); el.setSelectionRange(a, a); }
+    el.dispatchEvent(new Event("input", { bubbles: true })); el.focus();
+  });
+}
+function alternarTeclado() {
+  const abierto = $("teclado").classList.toggle("abierto");
+  document.body.classList.toggle("con-teclado", abierto);
+  $("btn-teclado").setAttribute("aria-pressed", abierto);
+  try { localStorage.setItem("edo_teclado", abierto ? "1" : "0"); } catch (e) {}
+}
+armarTeclado();
+$("btn-teclado").addEventListener("click", alternarTeclado);
+$("cerrar-teclado").addEventListener("click", alternarTeclado);
+try { if (localStorage.getItem("edo_teclado") === "1") alternarTeclado(); } catch (e) {}
 try { if (window.MathfieldElement) MathfieldElement.fontsDirectory = "vendor/mathlive/fonts"; } catch (e) {}

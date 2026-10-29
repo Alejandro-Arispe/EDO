@@ -45,3 +45,28 @@ def test_la_pagina_trae_historial_pdf_y_geogebra():
     for clave in ("tab-historial", "btn-pdf", "btn-gg", "salida-revisar"):
         assert clave in html
     assert "@media print" in c.get("/style.css").text
+
+
+def test_la_pagina_trae_el_teclado_y_sus_teclas_se_leen_bien():
+    """Cada tecla del teclado debe producir algo que el lector entienda dentro de una ecuación."""
+    import re
+    from pathlib import Path
+    from edo.core.lector import leer_expresion
+    html = c.get("/").text
+    assert 'id="teclado"' in html and 'id="btn-teclado"' in html
+    js = (Path(__file__).resolve().parents[2] / "web" / "app.js").read_text(encoding="utf-8")
+    snippets = re.findall(r'\["[^"]+", "([^"]*)", "[^"]*"\]', js[js.index("const TECLAS"):js.index("let ultimoCampo")])
+    assert len(snippets) >= 40
+    for s in snippets:
+        if s.strip() in {"=", "*", "?", "y'", "y''", "y'''", "dx", "dy", "D", "C1", "dy/dx", "d^2y/dx^2", "D^2"} or s.startswith(("y^", "y(", "y'(", "(D-")):
+            continue                       # fragmentos de ED: se prueban dentro de una ecuación
+        e = s.replace("|", "x")
+        if e.startswith("^"):
+            e = "x" + e
+        if e == "(x)/()":
+            e = "(x)/(2)"
+        if e.startswith("(x)^(1/n)"):
+            e = "(x)^(1/3)"
+        if e.startswith("x^(x/)"):
+            e = "x^(1/2)"
+        assert leer_expresion(e) is not None, s
