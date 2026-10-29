@@ -38,7 +38,7 @@ la app como una **función** que se crea por petición. Por eso el proyecto trae
 | Archivo | Para qué |
 |---|---|
 | `render.yaml`, `EDO_AISLAR` | solo Render (servidor con procesos de cálculo aislados) |
-| `api/index.py`, `vercel.json`, `requirements.txt`, `.vercelignore` | solo Vercel |
+| `app.py`, `vercel.json`, `requirements.txt`, `.vercelignore` | solo Vercel |
 | `.python-version` (`3.12`) | versión de Python (Vercel); Render la toma de `PYTHON_VERSION` en `render.yaml` |
 
 Pasos:

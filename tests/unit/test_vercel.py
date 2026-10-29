@@ -1,4 +1,4 @@
-"""La función de Vercel (api/index.py) debe exponer la misma app y servir la página estática."""
+"""La función de Vercel (app.py) debe exponer la misma app y servir la página estática."""
 import importlib.util
 from pathlib import Path
 
@@ -6,8 +6,8 @@ from fastapi.testclient import TestClient
 
 
 def test_api_index_expone_la_app_y_la_pagina():
-    ruta = Path(__file__).resolve().parents[2] / "api" / "index.py"
-    espec = importlib.util.spec_from_file_location("api_index_vercel", ruta)
+    ruta = Path(__file__).resolve().parents[2] / "app.py"
+    espec = importlib.util.spec_from_file_location("app_vercel", ruta)
     modulo = importlib.util.module_from_spec(espec)
     espec.loader.exec_module(modulo)
     c = TestClient(modulo.app)
