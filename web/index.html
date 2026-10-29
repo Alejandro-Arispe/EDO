@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>edo-solver</title>
+<link rel="stylesheet" href="vendor/katex/katex.min.css">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header><h1>edo-solver</h1><p>Ecuaciones diferenciales paso a paso · método del M.Sc. Ing. Eudal Avendaño Gonzales</p></header>
+<main>
+  <nav id="tabs">
+    <button data-tab="ed" class="activa">Ecuación diferencial</button>
+    <button data-tab="calculo">Derivadas e integrales</button>
+  </nav>
+
+  <section id="tab-ed">
+    <label>Ecuación (texto o editor matemático)</label>
+    <div class="fila">
+      <input id="entrada" type="text" placeholder="y'+2y=x e^x   ·   (x+y)dx-(x-y)dy=0   ·   (D^2-3D+2)y=e^x" autocomplete="off">
+      <button id="toggle-ml" type="button" title="Usar el editor matemático">∑</button>
+    </div>
+    <math-field id="ml" style="display:none"></math-field>
+    <label>Condiciones iniciales (opcional)</label>
+    <input id="condiciones" type="text" placeholder="y(1)=2, y'(0)=-1" autocomplete="off">
+    <div id="lectura" class="caja"></div>
+    <div class="fila">
+      <button id="btn-clasificar">Clasificar</button>
+      <button id="btn-resolver" class="primario">Resolver</button>
+    </div>
+    <label>Revisar mi respuesta</label>
+    <input id="respuesta" type="text" placeholder="y=3x-x^2   ·   x/y^2+1/y^3=C" autocomplete="off">
+    <div class="fila"><button id="btn-verificar">Verificar</button></div>
+    <div id="salida-ed"></div>
+  </section>
+
+  <section id="tab-calculo" hidden>
+    <label>Función de x</label>
+    <input id="f" type="text" placeholder="x^2 sen x   ·   x e^(2x)   ·   1/(x^2+1)" autocomplete="off">
+    <div class="fila">
+      <button id="btn-derivar">Derivar</button>
+      <button id="btn-integrar" class="primario">Integrar</button>
+    </div>
+    <div id="salida-calculo"></div>
+  </section>
+</main>
+<script src="vendor/katex/katex.min.js"></script>
+<script src="vendor/katex/auto-render.min.js"></script>
+<script src="vendor/mathlive/mathlive.min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

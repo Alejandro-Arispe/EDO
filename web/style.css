@@ -1,0 +1,23 @@
+:root{--bg:#fafaf7;--fg:#1d2330;--mut:#667085;--bd:#d9dbe1;--ac:#1f5fbf;--ok:#1b7f4b;--mal:#b42318;--aviso:#fff4d6;--card:#fff}
+@media (prefers-color-scheme:dark){:root{--bg:#14171d;--fg:#e8eaf0;--mut:#9aa3b2;--bd:#323846;--ac:#6ea0ff;--ok:#4cc38a;--mal:#ff7b72;--aviso:#3b3217;--card:#1c2028}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.5 system-ui,Segoe UI,sans-serif}
+header,main{max-width:860px;margin:0 auto;padding:0 16px}
+header{padding-top:20px}h1{margin:0;font-size:1.5rem}header p{margin:2px 0 14px;color:var(--mut);font-size:.9rem}
+nav{display:flex;gap:6px;margin-bottom:12px}
+nav button{background:none;border:1px solid var(--bd);color:var(--fg)}nav .activa{background:var(--ac);color:#fff;border-color:var(--ac)}
+label{display:block;margin:12px 0 4px;font-size:.85rem;color:var(--mut)}
+input,math-field{width:100%;padding:9px 10px;font:inherit;border:1px solid var(--bd);border-radius:8px;background:var(--card);color:var(--fg)}
+math-field{font-size:1.2rem}
+button{padding:8px 14px;border-radius:8px;border:1px solid var(--bd);background:var(--card);color:var(--fg);font:inherit;cursor:pointer}
+button.primario{background:var(--ac);color:#fff;border-color:var(--ac)}
+.fila{display:flex;gap:8px;margin:10px 0}.fila input{flex:1}
+.caja{margin:10px 0;padding:8px 12px;border:1px dashed var(--bd);border-radius:8px;min-height:1.5em;color:var(--mut)}
+.caja.error{color:var(--mal);border-color:var(--mal)}
+.paso{background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:10px 14px;margin:10px 0}
+.paso h3{margin:0 0 4px;font-size:1rem}.paso .regla{font-size:.78rem;color:var(--mut)}
+.paso .expl{margin:4px 0}
+.disc{margin-top:6px;padding:6px 10px;border-left:4px solid #d99a00;background:var(--aviso);border-radius:4px;font-size:.9rem}
+.ok{color:var(--ok);font-weight:600}.mal{color:var(--mal);font-weight:600}
+.aviso{margin:8px 0;padding:6px 10px;background:var(--aviso);border-radius:6px;font-size:.9rem}
+.katex-display{overflow-x:auto;overflow-y:hidden;padding:2px 0}
