@@ -233,12 +233,14 @@ def _normalizar(s: str) -> str:
     s = re.sub(r"y('+)", lambda m: f" Yd{len(m.group(1))} ", s)
     # diferenciales
     s = re.sub(r"d([xy])(?![A-Za-z0-9_])", lambda m: f" DIF{m.group(1).upper()} ", s)
+    s = s.replace("?", " QQ ")
     s = _funciones(s)
     return s
 
 
 _TRANSF = standard_transformations + (split_symbols, implicit_multiplication, convert_xor)
-_LOCAL = {"x": x, "y": ys, "e": sp.E, "D": D, "DIFX": _DIFX, "DIFY": _DIFY, "pi": sp.pi,
+QQ = sp.Symbol("QQ")  # «?»: M o N desconocido (hallar para que sea exacta)
+_LOCAL = {"QQ": QQ, "x": x, "y": ys, "e": sp.E, "D": D, "DIFX": _DIFX, "DIFY": _DIFY, "pi": sp.pi,
           **{f"Yd{k}": v for k, v in _YD.items()},
           "C": sp.Symbol("C"), **{f"C{k}": sp.Symbol(f"C{k}") for k in range(1, 13)}}
 

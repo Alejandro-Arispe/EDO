@@ -15,6 +15,8 @@ from ..conceptos.desde_raices import desde_raices, leer_raices
 from ..conceptos.verificacion import verificar_solucion
 from ..conceptos.wronskiano import analizar_dependencia
 from ..core.lector_general import leer_general
+from ..primer_orden.base import NoAplica
+from ..primer_orden.resolutor import clasificar_metodos, resolver as resolver_primer_orden
 from ..calculo.integrales import integrar
 from ..calculo.resultado import ErrorCalculo
 from ..core.lector import ED, ErrorLectura, leer_condiciones, leer_ed, leer_expresion, leer_relacion, x, ys
@@ -74,18 +76,23 @@ def _lectura(ed) -> dict:
 def clasificar(p: Entrada):
     ed = _leer_cualquiera(p.entrada, p.latex)
     c = clasificar_ed(ed)
-    # El clasificador de métodos de resolución llega con F3 en adelante.
+    metodos = clasificar_metodos(ed) if isinstance(ed, ED) else []
     return {"lectura": _lectura(ed), "clasificacion": c.to_dict(), "pasos": [s.to_dict() for s in c.pasos],
-            "metodos": []}
+            "metodos": metodos}
 
 
 @app.post("/resolver")
 def resolver(p: PedidoResolver):
     ed = leer_ed(p.entrada, latex=p.latex)
-    conds = leer_condiciones(p.condiciones) if p.condiciones else []
-    return JSONResponse(status_code=501, content={
-        "error": "Todavía no hay solvers instalados (se agregan desde la fase F3).",
-        "lectura": ed.to_dict(), "condiciones": [c.to_dict() for c in conds]})
+    conds = leer_condiciones(p.condiciones) if p.condiciones and p.condiciones.strip() else []
+    try:
+        r = resolver_primer_orden(ed, p.metodo or None, conds)
+    except NoAplica as exc:
+        return JSONResponse(status_code=422, content={"error": str(exc), "lectura": ed.to_dict()})
+    d = r.to_dict()
+    d["lectura"] = ed.to_dict()
+    d["condiciones"] = [c.to_dict() for c in conds]
+    return d
 
 
 @app.post("/verificar")

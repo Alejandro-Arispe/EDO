@@ -19,7 +19,7 @@ _ESPECIALES = tuple(
     getattr(mi, n) for n in (
         "DontKnowRule", "ErfRule", "EiRule", "SiRule", "CiRule", "ShiRule", "ChiRule", "LiRule",
         "PolylogRule", "FresnelSRule", "FresnelCRule", "UpperGammaRule", "EllipticERule",
-        "EllipticFRule", "IRule", "DiracDeltaRule", "HeavisideRule", "PiecewiseRule",
+        "EllipticFRule", "IRule", "DiracDeltaRule", "HeavisideRule",
     ) if hasattr(mi, n)
 )
 _NOMBRES_ESPECIALES = {
@@ -56,7 +56,7 @@ class _Traductor:
 
     def paso(self, titulo, regla, regla_obj, expl="", valor=None, antes=None):
         v = regla_obj.variable
-        val = regla_obj.eval() if valor is None else valor
+        val = _ev(regla_obj) if valor is None else valor
         self.pasos.append(Paso(titulo, regla, antes or _int(regla_obj.integrand, v), latex(val), expl))
         return val
 
@@ -66,6 +66,14 @@ class _Traductor:
             raise _NoElemental(r)
         v = r.variable
         f = r.integrand
+        if nombre == "PiecewiseRule":
+            gen = None
+            for sub, cond in r.subfunctions:
+                if cond == True or isinstance(cond, sp.Ne):  # noqa: E712
+                    gen = sub
+            if gen is None:
+                gen = r.subfunctions[-1][0]
+            return self.tr(gen)
         if nombre == "ConstantRule":
             return self.paso("Integral de una constante", r"\int c\,dx = c\,x", r)
         if nombre == "ConstantTimesRule":
@@ -73,7 +81,7 @@ class _Traductor:
                                    rf"{latex(r.constant)}\,{_int(r.other, v)}",
                                    f"${latex(r.constant)}$ es constante y sale de la integral."))
             self.tr(r.substep)
-            return r.eval()
+            return _ev(r)
         if nombre == "PowerRule":
             return self.paso("Regla de la potencia", r"\int x^n\,dx = \frac{x^{n+1}}{n+1},\ n\neq -1", r,
                              f"Con $n={latex(r.exp)}$.")
@@ -83,7 +91,7 @@ class _Traductor:
                                    "Se integra término a término."))
             for s in r.substeps:
                 self.tr(s)
-            return r.eval()
+            return _ev(r)
         if nombre == "URule":
             u, uf = r.u_var, r.u_func
             du = sp.diff(uf, v)
@@ -92,7 +100,7 @@ class _Traductor:
                 _int(r.substep.integrand, u),
                 f"Sea $u={latex(uf)}$; entonces $du={latex(du)}\\,d{v}$."))
             self.tr(r.substep)
-            val = r.eval()
+            val = _ev(r)
             self.pasos.append(Paso("Volver a la variable original", "", f"u = {latex(uf)}", latex(val),
                                    f"Se reemplaza $u={latex(uf)}$ en el resultado."))
             return val
@@ -104,12 +112,12 @@ class _Traductor:
             self.pasos.append(Paso("Reescribir el integrando", "álgebra / identidades", _int(f, v),
                                    _int(r.rewritten, v), "Se transforma el integrando a una forma integrable."))
             self.tr(r.substep)
-            return r.eval()
+            return _ev(r)
         if nombre == "CompleteSquareRule":
             self.pasos.append(Paso("Completar el cuadrado", "a x² + b x + c = a(x + b/2a)² + …", _int(f, v),
                                    _int(r.rewritten, v)))
             self.tr(r.substep)
-            return r.eval()
+            return _ev(r)
         if nombre == "AlternativeRule":
             return self.tr(r.alternatives[0])
         if nombre == "ExpRule":
@@ -126,7 +134,7 @@ class _Traductor:
                 "Sustitución trigonométrica", "", _int(f, v), _int(r.rewritten, r.theta),
                 f"Se hace ${v}={latex(r.func)}$ (válido si {latex(r.restriction)})."))
             self.tr(r.substep)
-            val = r.eval()
+            val = _ev(r)
             self.pasos.append(Paso("Volver a la variable original", "", "", latex(val)))
             return val
         if nombre in _TABLA:
@@ -147,7 +155,7 @@ class _Traductor:
         v = r.variable
         u, dv = r.u, r.dv
         du = sp.diff(u, v)
-        vv = r.v_step.eval()
+        vv = _ev(r.v_step)
         f = r.integrand
         self.pasos.append(Paso(
             "Integración por partes", r"\int u\,dv = u\,v - \int v\,du", _int(f, v),
@@ -155,7 +163,7 @@ class _Traductor:
                 f"Sea $u={latex(u)}$ y $dv={latex(dv)}\\,d{v}$; entonces $du={latex(du)}\\,d{v}$ y $v={latex(vv)}$."))
         if not ciclica and r.second_step is not None:
             self.tr(r.second_step)
-            return r.eval()
+            return _ev(r)
         return vv
 
     def _ciclica(self, r) -> sp.Expr:
@@ -164,13 +172,13 @@ class _Traductor:
         for pr in r.parts_rules:
             u, dv = pr.u, pr.dv
             du = sp.diff(u, v)
-            vv = pr.v_step.eval()
+            vv = _ev(pr.v_step)
             self.pasos.append(Paso(
                 "Integración por partes", r"\int u\,dv = u\,v - \int v\,du", _int(actual, v),
                 rf"{latex(u)}\cdot {latex(vv)} - \int {latex(vv)}\,\left({latex(du)}\right)d{v}",
                 f"Sea $u={latex(u)}$ y $dv={latex(dv)}\\,d{v}$; entonces $du={latex(du)}\\,d{v}$ y $v={latex(vv)}$."))
             actual = sp.expand(vv * du)
-        val = r.eval()
+        val = _ev(r)
         self.pasos.append(Paso(
             "Despejar la integral (partes cíclicas)", "I = (…) + k·I ⟹ I = (…)/(1−k)", _int(r.integrand, v), latex(val),
             f"Después de aplicar partes la integral original reaparece con coeficiente ${latex(r.coefficient)}$; se despeja $I$."))
@@ -208,12 +216,28 @@ def integrar(expr: sp.Expr, var: sp.Symbol) -> ResultadoCalculo:
     return ResultadoCalculo(expr, simple, pasos, [], verif, True, enun, latex(simple) + " + C")
 
 
+def _rama_generica(*pares):
+    """De Piecewise((v1, c1), (v2, c2), ...) toma la rama genérica (la de condición True o Ne)."""
+    for v, c in pares:
+        if c == True:  # noqa: E712
+            return v
+    for v, c in pares:
+        if isinstance(c, sp.Ne):
+            return v
+    return pares[0][0]
+
+
 def _quitar_piecewise(e: sp.Expr) -> sp.Expr:
-    if isinstance(e, sp.Piecewise):
-        if len(e.args) == 2 and e.args[1][1] == True and isinstance(e.args[0][1], sp.Eq):  # noqa: E712
-            return e.args[1][0]
-        return e.args[0][0]
-    return e
+    if not e.has(sp.Piecewise):
+        return e
+    if len(e.atoms(sp.Piecewise)) and isinstance(e, sp.Piecewise) and len(e.args) == 2             and e.args[1][1] == True and isinstance(e.args[0][1], sp.Eq):  # noqa: E712
+        return _quitar_piecewise(e.args[1][0])
+    return e.replace(lambda a: isinstance(a, sp.Piecewise),
+                     lambda a: _quitar_piecewise(_rama_generica(*[tuple(x) for x in a.args])))
+
+
+def _ev(regla) -> sp.Expr:
+    return _quitar_piecewise(regla.eval())
 
 
 def _no_elemental(expr, var, enun, motivo) -> ResultadoCalculo:

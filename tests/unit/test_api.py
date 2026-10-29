@@ -24,8 +24,9 @@ def test_verificar():
     assert v("(2xy+3)dy-y^2 dx=0", "x/y^2+1/y^3=C")
 
 
-def test_resolver_aun_sin_solvers():
-    assert c.post("/resolver", json={"entrada": "y'=x"}).status_code == 501
+def test_resolver_orden_superior_aun_no():
+    r = c.post("/resolver", json={"entrada": "y''+y=0"})
+    assert r.status_code == 422 and "primer orden" in r.json()["error"]
 
 
 def test_pagina_estatica():
@@ -39,3 +40,19 @@ def test_calculo_derivar_e_integrar():
     assert r["verificacion"]["ok"] and r["resultado_latex"].endswith("+ C")
     r = c.post("/calculo/integrar", json={"entrada": "e^(x^2)"}).json()
     assert r["elemental"] is False and r["advertencias"]
+
+
+def test_resolver_primer_orden_y_forzar_metodo():
+    r = c.post("/resolver", json={"entrada": "(2xy+3)dy - y^2 dx = 0"}).json()
+    assert r["metodo"] == "lineal en x" and r["verificacion"]["ok"]
+    r = c.post("/resolver", json={"entrada": "y'=3-2x", "condiciones": "y(1)=2"}).json()
+    assert r["solucion"] == "y = - x^{2} + 3 x"
+    r = c.post("/resolver", json={"entrada": "(1+e^(x/y))dx + e^(x/y)(1-x/y)dy = 0", "metodo": "homogenea_xy",
+                                  "condiciones": "y(1)=1"}).json()
+    assert r["verificacion"]["ok"] and any(p["discrepancia"] and "A5" in p["discrepancia"] for p in r["pasos"])
+    mal = c.post("/resolver", json={"entrada": "y'=3-2x", "metodo": "exacta2"})
+    assert mal.status_code == 422
+    nada = c.post("/resolver", json={"entrada": "y'=x^2+y^2"}).json()
+    assert nada["metodo"] == "ninguno" and not nada["pasos"]
+    k = c.post("/clasificar", json={"entrada": "y' = y/x"}).json()
+    assert k["metodos"] and k["metodos"][0]["metodo"] == "separable"

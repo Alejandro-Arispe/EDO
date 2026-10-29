@@ -39,9 +39,12 @@ class Resultado:
     advertencias: list[str] = field(default_factory=list)
     otros_metodos_aplicables: list[dict] = field(default_factory=list)
     valor: object = None  # objeto SymPy de la solución (no se serializa)
+    adicionales: list[dict] = field(default_factory=list)  # [{"tipo": "singular"|"perdida", "latex": ...}]
+    extra: list = field(default_factory=list)  # objetos de las adicionales (no se serializan)
 
     def to_dict(self) -> dict:
         d = asdict(self)
         d.pop("valor", None)
+        d.pop("extra", None)
         d["verificacion"] = self.verificacion.to_dict() if self.verificacion else None
         return d

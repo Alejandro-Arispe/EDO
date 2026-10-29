@@ -1,0 +1,46 @@
+# Casos del Tema 2 y Tema 3 (ED de primer orden y grado superior).
+# resolver: ed, [metodo], [condiciones], solucion (relación, general o particular) | parametrica {x, y} | factores
+# Páginas = número impreso al pie del texto.
+
+# ---- Variables separables (texto p.22-23)
+- {id: t2-sep-1, ed: "(1+y^2)(e^(2x)dx - e^y dy) - (1+y)dy = 0", metodo: separable, solucion: "e^(2x)/2 - e^y - arctg(y) - ln(1+y^2)/2 = C", ref: "texto p.22 ej.1"}
+- {id: t2-sep-2, ed: "y' = e^(x+y) + e^(x-y)", metodo: separable, condiciones: "y(0)=0", solucion: "arctg(e^y) - e^x = pi/4 - 1", ref: "texto p.23 ej.2"}
+- {id: A1, ed: "y' = 3-2x", metodo: separable, condiciones: "y(1)=2", solucion: "y = 3x - x^2", discrepancia: A1, ref: "texto p.17; DISCREPANCIAS A1"}
+- {id: A2, ed: "(y+3)dx + (4-x)dy = 0", metodo: separable, condiciones: "y(7)=0", solucion: "y = x - 7", discrepancia: A2, ref: "DISCREPANCIAS A2"}
+- {id: t2-sep-3, ed: "y dy/dx = sqrt(9-y^2)", metodo: separable, solucion: "-sqrt(9-y^2) - x = C", ref: "texto p.23 (circunferencias)"}
+
+# ---- Reducibles a separable (texto p.23-24)
+- {id: t2-red-1, ed: "y' + 1 = (x+y+2)^3", metodo: reducible_lineal, solucion: "-1/(2(x+y+2)^2) - x = C", ref: "texto p.24 ej.3"}
+- {id: t2-red-2, ed: "y' = (x+y)^2", metodo: reducible_lineal, solucion: "y = -x + tg(x+C)", ref: "estándar (u = x+y)"}
+- {id: t2-red-3, ed: "y' = y/x (1+xy)/(1-xy)", metodo: reducible_xy, solucion: "-x y/2 - ln(x) + ln(x y)/2 = C", ref: "estándar (u = xy)"}
+
+# ---- Lineal (texto p.25-26)
+- {id: t2-lin-1, ed: "y' cos(x) + y = 1 - sen(x)", metodo: lineal_y, solucion: "y cos(x)/(1-sen(x)) - x = C", ref: "texto p.26 ej.1"}
+- {id: A4, ed: "(2xy+3)dy - y^2 dx = 0", metodo: lineal_x, solucion: "x/y^2 + 1/y^3 = C", discrepancia: A4, ref: "texto p.26 ej.2; DISCREPANCIAS A4"}
+- {id: t2-lin-2, ed: "y' + 2y = x e^x", metodo: lineal_y, solucion: "y = (3x-1) e^x/9 + C e^(-2x)", ref: "estándar"}
+
+# ---- Bernoulli
+- {id: t2-ber-1, ed: "y' + y = y^2 e^x", metodo: bernoulli_y, solucion: "y = e^(-x)/(C-x)", ref: "estándar"}
+- {id: t2-ber-2, ed: "y' - y = x y^3", metodo: bernoulli_y, solucion: "e^(2x)/y^2 - (1/2 - x) e^(2x) = C", ref: "estándar"}
+
+# ---- Homogénea (y = tx, x = ty)
+- {id: A5-homogenea, ed: "(1+e^(x/y))dx + e^(x/y)(1-x/y)dy = 0", metodo: homogenea_xy, condiciones: "y(1)=1", solucion: "x + y e^(x/y) = 1 + e", discrepancia: A5, ref: "texto p.31; DISCREPANCIAS A5"}
+- {id: A5-exacta, ed: "(1+e^(x/y))dx + e^(x/y)(1-x/y)dy = 0", metodo: exacta, condiciones: "y(1)=1", solucion: "x + y e^(x/y) = 1 + e", ref: "DISCREPANCIAS A5 (por exacta)"}
+- {id: t2-hom-1, ed: "(x+y)dx - (x-y)dy = 0", metodo: homogenea_yx, solucion: "arctg(y/x) - ln(sqrt(x^2+y^2)) = C", ref: "texto p.16 (solución implícita)"}
+- {id: t2-hom-2, ed: "(x^2+y^2)dx + x y dy = 0", metodo: homogenea_xy, solucion: "x^4 + 2 x^2 y^2 = C", ref: "estándar"}
+
+# ---- Exacta (I Evaluación p.3 y texto p.27)
+- {id: t2-exa-1, ed: "(y e^(xy) + y^2 - y/x^2)dx + (x e^(xy) + 2xy + 1/x)dy = 0", metodo: exacta, solucion: "e^(xy) + x y^2 + y/x = C", ref: "I Evaluación p.3 (impresa)"}
+- {id: t2-exa-2, ed: "(?)dx + (x e^(xy) + 2xy + 1/x)dy = 0", metodo: exacta, solucion: "e^(xy) + x y^2 + y/x = C", ref: "hallar M para que sea exacta (mismo ejercicio)"}
+- {id: t2-exa-3, ed: "(y^3 + k x y^4 - 2x)dx + (3xy^2 + 20x^2y^3)dy = 0", solucion: "x y^3 + 5 x^2 y^4 - x^2 = C", ref: "hallar k (Zill 2.4, k=10)"}
+
+# ---- Grado superior (Tema 3, texto p.34-38)
+- {id: t3-yfp, ed: "y = 3 y'^4 - sqrt(y') + 1", metodo: y_f_p, parametrica: {x: "4 p^3 + 1/sqrt(p) + C", y: "3 p^4 - sqrt(p) + 1"}, ref: "texto p.35 (la verificación del texto)"}
+- {id: t3-xfp, ed: "x = y'^3 + y'", metodo: x_f_p, parametrica: {x: "p^3 + p", y: "3 p^4/4 + p^2/2 + C"}, ref: "texto p.36 caso II"}
+- {id: A13, ed: "y = x y' + e^(y') + ln(y') - 1", metodo: clairaut, solucion: "y = C x + e^C + ln(C) - 1", singular: {x: "-e^p - 1/p", y: "e^p + ln(p) - p e^p - 2"}, discrepancia: A13, ref: "texto p.38; DISCREPANCIAS A13"}
+- {id: t3-clairaut-2, ed: "y = x y' + y'^2", metodo: clairaut, solucion: "y = C x + C^2", singular: {y: "-x^2/4"}, ref: "estándar"}
+- {id: A14, ed: "y = 2x y' + y'^2 + 1", metodo: lagrange, parametrica: {x: "-2p/3 + C/p^2", y: "2C/p - p^2/3 + 1"}, perdida: "y = 1", ref: "DISCREPANCIAS A14"}
+- {id: t3-factor-1, ed: "y'^2 - 3y' + 2 = 0", metodo: factorizable, factores: ["y = C + x", "y = C + 2x"], ref: "estándar"}
+
+# ---- Ningún método (B5)
+- {id: B5, ed: "y' = x^2 + y^2", ninguno: true, ref: "DISCREPANCIAS B5 (Riccati: fuera del temario)"}

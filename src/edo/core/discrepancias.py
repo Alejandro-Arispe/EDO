@@ -29,7 +29,13 @@ REGISTRO: list[Entrada] = [
     Entrada("A2", "(y+3)dx+(4-x)dy=0", "y(7)=0", "constantes",
             "El texto usó x=0, y=7 (invirtió el par). Como y(7)=0 significa x=7, y=0, la solución "
             "particular es y=x-7."),
-    Entrada("A3", "xy'+x ln y = x sen x + y ln y", None, "verificacion",
+    Entrada("A4", "(2xy+3)dy-y^2dx=0", None, "solucion",
+            "El texto escribió x/y² + 3/(4y⁴) = C. Al integrar queda ∫3/y⁴ dy = −1/y³, así que la solución correcta es "
+            "x/y² + 1/y³ = C."),
+    Entrada("A5", "(1+e^(x/y))dx+e^(x/y)(1-x/y)dy=0", "y(1)=1", "solucion",
+            "El texto escribió ln(x/y) en vez de ln y al volver a la variable original. La solución correcta es "
+            "ln(x/y + e^(x/y)) + ln y = ln(1+e), es decir x + y e^(x/y) = 1 + e."),
+    Entrada("A3","xy'+x ln y = x sen x + y ln y", None, "verificacion",
             "El texto perdió y' al derivar ln y. Derivando correctamente se obtiene "
             "x y'(1+ln y) = x sen x + y ln y, que no es la ecuación escrita en el texto."),
 ]

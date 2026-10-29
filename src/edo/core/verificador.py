@@ -87,6 +87,14 @@ def derivadas_implicitas(G: sp.Expr, n: int) -> list[sp.Expr]:
     return out
 
 
+def _grado_alto(G: sp.Expr) -> bool:
+    """¿G es un polinomio en y de grado mayor que 2?"""
+    try:
+        return G.is_polynomial(ys) and sp.degree(G, ys) > 2
+    except Exception:
+        return False
+
+
 def verificar_implicita(ed: ED, izq: sp.Expr, der: sp.Expr) -> Verificacion:
     """Verifica la solución implícita izq(x,y) = der (der puede llevar constantes).
 
@@ -105,9 +113,9 @@ def verificar_implicita(ed: ED, izq: sp.Expr, der: sp.Expr) -> Verificacion:
     residuo = sp.simplify(e)
     if residuo == 0:
         return Verificacion(True, "simbólica")
-    # sobre la curva: despejar y si se puede
+    # sobre la curva: despejar y si se puede (no se intenta con polinomios de grado > 2 en y: Cardano es muy pesado)
     try:
-        ramas = sp.solve(G, ys)
+        ramas = [] if _grado_alto(G) else sp.solve(G, ys)
     except Exception:
         ramas = []
     if ramas:

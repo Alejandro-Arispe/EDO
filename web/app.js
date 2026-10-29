@@ -62,13 +62,32 @@ async function accion(ruta, destinoId) {
   try {
     const q = entradaED();
     if ($("condiciones").value.trim()) q.condiciones = $("condiciones").value;
+    if (ruta === "/resolver" && $("metodo").value) q.metodo = $("metodo").value;
     const d = await api(ruta, q);
+    if (d.metodos) poblarMetodos(d.metodos, destino);
     if (d.mensaje) crear("div", "aviso", destino).textContent = d.mensaje;
     if (d.pasos) pintarPasos(d.pasos, destino);
-    if (d.solucion) mate(crear("div", "paso", destino), d.solucion);
+    if (d.solucion) { const s = crear("div", "paso", destino); crear("h3", "", s).textContent = "Solución (" + (d.metodo || "") + ")"; mate(crear("div", "", s), d.solucion); }
+    (d.adicionales || []).forEach((a) => { const s = crear("div", "paso", destino); crear("h3", "", s).textContent = a.tipo === "singular" ? "Solución singular" : "Solución perdida al dividir"; mate(crear("div", "", s), a.latex); });
     if (d.verificacion) pintarVerificacion(d.verificacion, destino);
-    (d.advertencias || []).forEach((a) => { crear("div", "aviso", destino).textContent = a; });
+    (d.advertencias || []).forEach((a) => { const av = crear("div", "aviso", destino); texto(av, a); });
+    if (d.otros_metodos_aplicables && d.otros_metodos_aplicables.length)
+      crear("div", "aviso", destino).textContent = "También aplican: " + d.otros_metodos_aplicables.map((m) => m.titulo).join(", ") + ". Elige uno en el selector «Método» para forzarlo.";
   } catch (e) { error(destino, e); }
+}
+
+function poblarMetodos(metodos, destino) {
+  const sel = $("metodo"); const actual = sel.value;
+  sel.innerHTML = '<option value="">Método: automático</option>';
+  metodos.forEach((m) => { const o = document.createElement("option"); o.value = m.metodo; o.textContent = m.titulo; sel.appendChild(o); });
+  [["homogenea_yx", "Homogénea con y = t x"], ["homogenea_xy", "Homogénea con x = t y"]].forEach(([v, n]) => {
+    if (metodos.some((m) => m.metodo === "homogenea")) { const o = document.createElement("option"); o.value = v; o.textContent = n; sel.appendChild(o); }
+  });
+  sel.value = [...sel.options].some((o) => o.value === actual) ? actual : "";
+  if (metodos.length) {
+    const av = crear("div", "aviso", destino);
+    av.textContent = "Métodos aplicables: " + metodos.map((m) => m.titulo + " (" + m.motivo + ")").join(" · ");
+  }
 }
 
 async function verificar() {
