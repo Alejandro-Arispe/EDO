@@ -30,3 +30,12 @@ def test_resolver_aun_sin_solvers():
 
 def test_pagina_estatica():
     assert "edo-solver" in c.get("/").text
+
+
+def test_calculo_derivar_e_integrar():
+    r = c.post("/calculo/derivar", json={"entrada": "x^2 sen x"}).json()
+    assert r["verificacion"]["ok"] and r["pasos"]
+    r = c.post("/calculo/integrar", json={"entrada": "x e^x"}).json()
+    assert r["verificacion"]["ok"] and r["resultado_latex"].endswith("+ C")
+    r = c.post("/calculo/integrar", json={"entrada": "e^(x^2)"}).json()
+    assert r["elemental"] is False and r["advertencias"]

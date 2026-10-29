@@ -8,7 +8,10 @@ from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
-from ..core.lector import ED, ErrorLectura, leer_condiciones, leer_ed, leer_relacion, ys
+from ..calculo.derivadas import derivar
+from ..calculo.integrales import integrar
+from ..calculo.resultado import ErrorCalculo
+from ..core.lector import ED, ErrorLectura, leer_condiciones, leer_ed, leer_expresion, leer_relacion, x, ys
 from ..core.verificador import verificar_explicita, verificar_implicita
 
 WEB = Path(__file__).resolve().parents[3] / "web"
@@ -71,6 +74,24 @@ def verificar(p: PedidoVerificar):
     ed = leer_ed(p.ed)
     v = _verificar(ed, p.respuesta, p.latex)
     return {"lectura": ed.to_dict(), "verificacion": v.to_dict()}
+
+
+class PedidoCalculo(Entrada):
+    orden: int = 1
+
+
+@app.post("/calculo/derivar")
+def calculo_derivar(p: PedidoCalculo):
+    try:
+        r = derivar(leer_expresion(p.entrada, latex=p.latex), x, max(1, min(p.orden, 6)))
+    except ErrorCalculo as exc:
+        return JSONResponse(status_code=422, content={"error": str(exc)})
+    return r.to_dict()
+
+
+@app.post("/calculo/integrar")
+def calculo_integrar(p: Entrada):
+    return integrar(leer_expresion(p.entrada, latex=p.latex), x).to_dict()
 
 
 if WEB.is_dir():

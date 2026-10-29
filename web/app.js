@@ -25,7 +25,10 @@ function pintarPasos(pasos, destino) {
   pasos.forEach((p, i) => {
     const c = crear("div", "paso", destino);
     crear("h3", "", c).textContent = `${i + 1}. ${p.titulo}`;
-    if (p.regla) crear("div", "regla", c).textContent = p.regla;
+    if (p.regla) {
+      const r = crear("div", "regla", c);
+      if (p.regla.includes("\\")) mate(r, p.regla, false); else r.textContent = p.regla;
+    }
     if (p.explicacion) texto(crear("div", "expl", c), p.explicacion);
     if (p.antes_latex) mate(crear("div", "", c), p.antes_latex);
     if (p.despues_latex) mate(crear("div", "", c), "\\Rightarrow\\; " + p.despues_latex);
