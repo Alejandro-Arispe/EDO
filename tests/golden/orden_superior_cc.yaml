@@ -1,0 +1,21 @@
+# Tema 3 del programa (Tema 4 del texto): método abreviado y coeficientes indeterminados.
+# yp: solución particular esperada. constantes: nº de constantes de y_h. ambos: se prueban los dos métodos.
+- {id: t4-abrev-1, ed: "y'' - y' - 6y = 2 + e^(2x) + e^(4x)", yp: "-1/3 - e^(2x)/4 + e^(4x)/6", constantes: 2, ambos: true, ref: "texto p.48 (Caso I)"}
+- {id: A9, ed: "y'''' + y'' = sen(2x)", yp: "sen(2x)/12", constantes: 4, ambos: true, discrepancia: A9, ref: "texto p.49 (Caso II); DISCREPANCIAS A9"}
+- {id: t4-abrev-3, ed: "y'' - y = e^(2x) sen(3x)", yp: "-e^(2x)(6cos(3x)+3sen(3x))/90", constantes: 2, ambos: true, ref: "texto p.50 (Caso III)"}
+- {id: A6, ed: "y'' + 4y = 3x^3", yp: "3x^3/4 - 9x/8", constantes: 2, ambos: true, discrepancia: A6, ref: "III Evaluación p.7 ej.1; DISCREPANCIAS A6"}
+- {id: A10, ed: "y'' - 2y' + y = x^3 + 4x", yp: "x^3 + 6x^2 + 22x + 32", constantes: 2, ambos: true, discrepancia: A10, ref: "texto p.55; DISCREPANCIAS A10"}
+- {id: A11a, ed: "y'' - 4y' + 4y = x e^(3x)", yp: "(x-2)e^(3x)", constantes: 2, ambos: true, discrepancia: A11a, ref: "texto p.57; DISCREPANCIAS A11"}
+- {id: A11b, ed: "y'' - 4y' + 4y = x e^(2x)", yp: "x^3 e^(2x)/6", constantes: 2, ambos: true, discrepancia: A11b, ref: "DISCREPANCIAS A11"}
+- {id: t4-coef-2, ed: "y'' - 3y' + 2y = e^(3x)(x^2 + 2x - 1)", yp: "(x^2/2 - x/2 - 1/4) e^(3x)", constantes: 2, ambos: true, ref: "texto p.56"}
+- {id: B2, ed: "(D^2+5)y = cos(sqrt5 x)", yp: "x sen(sqrt5 x)/(2 sqrt5)", constantes: 2, ambos: true, ref: "DISCREPANCIAS B2 (resonancia)"}
+- {id: t4-suma, ed: "y'' + y = sen(x) + x", yp: "x - x cos(x)/2", constantes: 2, ambos: true, ref: "suma con resonancia"}
+- {id: t4-trigpoli, ed: "y'' + y = x cos(2x)", yp: "-x cos(2x)/3 + 4 sen(2x)/9", constantes: 2, ambos: true, ref: "polinomio por trigonométrica"}
+- {id: II-eval-2, ed: "y'' + 4y' + 5y = 10 e^(-3x)", condiciones: "y(0)=1, y'(0)=1", solucion: "e^(-2x)(-4cos(x) + 8 sen(x)) + 5e^(-3x)", ref: "II Evaluación p.7 ej.2"}
+- {id: B1-ed, ed: "y^(6) - 20y^(5) + 158y^(4) - 580y''' + 841y'' = 0", constantes: 6, ref: "DISCREPANCIAS B1 (como ED)"}
+- {id: t4-homog-1, ed: "y''' - y'' - 6y' = 0", constantes: 3, ref: "texto p.45 (raíces 0, 3, -2)"}
+- {id: t4-homog-2, ed: "y''' - 3y'' + 3y' - y = 0", constantes: 3, ref: "texto p.45 (raíz triple)"}
+- {id: t4-homog-3, ed: "y'' + 2y' + 3y = 0", constantes: 2, ref: "texto p.46 (complejas)"}
+- {id: t4-homog-4, ed: "y'' - 5y' + 2y = 0", constantes: 2, ref: "raíces (5±√17)/2"}
+- {id: B3, ed: "y^(9) - y^(7) + 273y^(5) - 820y''' + 576y' = 0", constantes: 9, numerica: true, ref: "DISCREPANCIAS B3"}
+- {id: B4, ed: "2y'' + 2y' + y = 4 sqrt(x)", ninguno: true, ref: "DISCREPANCIAS B4 (variación de parámetros, F5)"}

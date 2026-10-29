@@ -24,9 +24,9 @@ def test_verificar():
     assert v("(2xy+3)dy-y^2 dx=0", "x/y^2+1/y^3=C")
 
 
-def test_resolver_orden_superior_aun_no():
-    r = c.post("/resolver", json={"entrada": "y''+y=0"})
-    assert r.status_code == 422 and "primer orden" in r.json()["error"]
+def test_resolver_sin_derivadas_es_422():
+    r = c.post("/resolver", json={"entrada": "y = x^2"})
+    assert r.status_code == 422 and "no es una ecuación diferencial" in r.json()["error"]
 
 
 def test_pagina_estatica():

@@ -41,10 +41,12 @@ class Resultado:
     valor: object = None  # objeto SymPy de la solución (no se serializa)
     adicionales: list[dict] = field(default_factory=list)  # [{"tipo": "singular"|"perdida", "latex": ...}]
     extra: list = field(default_factory=list)  # objetos de las adicionales (no se serializan)
+    particular: object = None  # y_p como objeto SymPy (no se serializa)
 
     def to_dict(self) -> dict:
         d = asdict(self)
         d.pop("valor", None)
         d.pop("extra", None)
+        d.pop("particular", None)
         d["verificacion"] = self.verificacion.to_dict() if self.verificacion else None
         return d

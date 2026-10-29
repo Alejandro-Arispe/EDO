@@ -16,7 +16,7 @@ from ..conceptos.verificacion import verificar_solucion
 from ..conceptos.wronskiano import analizar_dependencia
 from ..core.lector_general import leer_general
 from ..primer_orden.base import NoAplica
-from ..primer_orden.resolutor import clasificar_metodos, resolver as resolver_primer_orden
+from ..resolutor import clasificar_metodos, resolver as resolver_primer_orden
 from ..calculo.integrales import integrar
 from ..calculo.resultado import ErrorCalculo
 from ..core.lector import ED, ErrorLectura, leer_condiciones, leer_ed, leer_expresion, leer_relacion, x, ys

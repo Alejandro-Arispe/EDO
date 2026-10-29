@@ -29,7 +29,21 @@ REGISTRO: list[Entrada] = [
     Entrada("A2", "(y+3)dx+(4-x)dy=0", "y(7)=0", "constantes",
             "El texto usó x=0, y=7 (invirtió el par). Como y(7)=0 significa x=7, y=0, la solución "
             "particular es y=x-7."),
-    Entrada("A4", "(2xy+3)dy-y^2dx=0", None, "solucion",
+    Entrada("A6", "y''+4y=3x^3", None, "particular",
+            "El texto escribió (4/3)x³ − (9/8)x. Con F(D)=D²+4: 1/(4(1+D²/4))·3x³ = (3/4)(x³ − (3/2)x), "
+            "así que y_p = (3/4)x³ − (9/8)x."),
+    Entrada("A9", "y''''+y''=sen(2x)", None, "particular",
+            "El texto omitió C₃ y C₄: y_h = C₁ + C₂x + C₃cos x + C₄sen x, y la solución es "
+            "y = C₁ + C₂x + C₃cos x + C₄sen x + sen(2x)/12."),
+    Entrada("A10", "y''-2y'+y=x^3+4x", None, "particular",
+            "El texto resolvió con −y. Con F(D)=(D−1)²: 1/(1−D)² = 1+2D+3D²+4D³+…, y_p = x³+6x²+22x+32."),
+    Entrada("A11a", "y''-4y'+4y=x e^(3x)", None, "particular",
+            "El texto multiplicó por x², pero 3 no es raíz de la ecuación característica (las raíces son 2, 2): "
+            "no hay que modificar. y_p = (x − 2)e^(3x)."),
+    Entrada("A11b", "y''-4y'+4y=x e^(2x)", None, "particular",
+            "La raíz 2 tiene multiplicidad 2: se multiplica por x² (s = multiplicidad, no «grado de Q ≤ orden»). "
+            "y_p = (x³/6)e^(2x)."),
+    Entrada("A4","(2xy+3)dy-y^2dx=0", None, "solucion",
             "El texto escribió x/y² + 3/(4y⁴) = C. Al integrar queda ∫3/y⁴ dy = −1/y³, así que la solución correcta es "
             "x/y² + 1/y³ = C."),
     Entrada("A5", "(1+e^(x/y))dx+e^(x/y)(1-x/y)dy=0", "y(1)=1", "solucion",

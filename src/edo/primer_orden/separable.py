@@ -59,7 +59,7 @@ def _perdidas(f2: sp.Expr, ed: ED, G: sp.Expr, exp_y=None) -> list[str]:
             dentro = sp.simplify(sp.diff(G.subs(ys, r), x)) == 0
         out.append(f"Al dividir entre ${latex(f2)}$ se pierde la solución constante $y={latex(r)}$"
                    + (" (ya está contenida en la familia para algún valor de la constante)." if dentro else
-                      " (NO está contenida en la familia: es una solución perdida)."))
+                      " (no está contenida en la familia tal como quedó escrita: es una solución aparte; a veces se recupera redefiniendo la constante, por ejemplo C = 0 en y = C e^x)."))
     return out
 
 
