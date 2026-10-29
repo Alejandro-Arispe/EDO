@@ -184,8 +184,21 @@ class PedidoCalculo(Entrada):
     orden: int = 1
 
 
+_NO_SOPORTADO = ("Escribe solo la función (por ejemplo x^2 sen x), sin ∫, sin dx y sin «Integral(...)»: "
+                 "las integrales definidas, las integrales dobles y las derivadas parciales todavía no están disponibles.")
+
+
+def _revisar_calculo(entrada: str):
+    import re
+    if re.search(r"(?i)integral|∫|\\int|(?<![A-Za-z])d[xy](?![A-Za-z])|∂|partial", entrada):
+        return JSONResponse(status_code=422, content={"error": _NO_SOPORTADO})
+    return None
+
+
 @app.post("/calculo/derivar")
 def calculo_derivar(p: PedidoCalculo):
+    if (mal := _revisar_calculo(p.entrada)) is not None:
+        return mal
     try:
         r = derivar(leer_expresion(p.entrada, latex=p.latex), x, max(1, min(p.orden, 6)))
     except ErrorCalculo as exc:
@@ -195,6 +208,8 @@ def calculo_derivar(p: PedidoCalculo):
 
 @app.post("/calculo/integrar")
 def calculo_integrar(p: Entrada):
+    if (mal := _revisar_calculo(p.entrada)) is not None:
+        return mal
     return integrar(leer_expresion(p.entrada, latex=p.latex), x).to_dict()
 
 

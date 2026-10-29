@@ -202,7 +202,7 @@ async function concepto() {
 async function calculo(ruta) {
   const destino = $("salida-calculo"); destino.innerHTML = "";
   try {
-    const d = await api(ruta, { entrada: $("f").value });
+    const d = await api(ruta, { entrada: $("f").value, orden: ruta.endsWith("derivar") ? Math.max(1, Math.min(6, parseInt($("f-orden").value, 10) || 1)) : 1 });
     mate(crear("div", "paso", destino), d.enunciado_latex);
     pintarPasos(d.pasos, destino);
     if (d.verificacion) pintarVerificacion(d.verificacion, destino);

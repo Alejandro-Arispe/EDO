@@ -56,3 +56,12 @@ def test_resolver_primer_orden_y_forzar_metodo():
     assert nada["metodo"] == "ninguno" and not nada["pasos"]
     k = c.post("/clasificar", json={"entrada": "y' = y/x"}).json()
     assert k["metodos"] and k["metodos"][0]["metodo"] == "separable"
+
+
+def test_calculo_rechaza_integrales_definidas_dobles_y_parciales_sin_basura():
+    for e in ("Integral(x^2,(x,0,1))", "∫ x dx", "x dx", "∂z/∂x"):
+        for ruta in ("/calculo/integrar", "/calculo/derivar"):
+            r = c.post(ruta, json={"entrada": e})
+            assert r.status_code == 422 and "todavía no están disponibles" in r.json()["error"]
+    r = c.post("/calculo/derivar", json={"entrada": "x^3 sen x", "orden": 3}).json()
+    assert r["verificacion"]["ok"] and r["enunciado_latex"].startswith(r"\frac{d^3}")
